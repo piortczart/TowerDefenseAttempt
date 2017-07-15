@@ -8,6 +8,7 @@ using TowerDefenseColab.GameBusHere;
 using TowerDefenseColab.GameObjects;
 using TowerDefenseColab.GamePhases;
 using TowerDefenseColab.GamePhases.GameLevels;
+using TowerDefenseColab.GraphicsPoo.SpriteUnicorn;
 using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab
@@ -36,6 +37,7 @@ namespace TowerDefenseColab
             _fontsAndColors = fontsAndColors;
             _inputManager = inputManager;
             _inputManager.SetMousePointFunction(() => PointToClient(Cursor.Position));
+            inputManager.OnKeyReleased += OnKeyRelease;
 
             _bus.Subscribe<MessageWindowResized>(a =>
             {
@@ -46,10 +48,22 @@ namespace TowerDefenseColab
             Show();
         }
 
+        private bool _showLogs;
+
+        private void OnKeyRelease(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.L:
+                    _showLogs = !_showLogs;
+                    break;
+            }
+        }
+
         /// <summary>
         /// Initializes the back buffer. Needs to be called when resizing the window.
         /// </summary>
-        public void InitBackBuffer(Rectangle displayRectangle)
+        private void InitBackBuffer(Rectangle displayRectangle)
         {
             _backBuffer?.Dispose();
             BufferedGraphicsContext myContext = BufferedGraphicsManager.Current;
@@ -68,16 +82,12 @@ namespace TowerDefenseColab
             {
                 Layout = new[,]
                 {
-                    { 13,32,13,13,13,13,13,13,13,13 },
-                    { 13,32,13,13,13,13,13,13,13,13 },
-                    { 13,32,13,13,13,13,13,13,13,13 },
-                    { 13,07,29,29,29,38,13,13,13,13 },
-                    { 13,13,13,13,13,07,29,29,29,29 },
-                    { 13,13,13,13,13,13,13,13,13,13 },
-                    { 13,13,13,13,-1,13,13,13,13,13 },
-                    { 13,13,13,13,13,13,13,13,13,13 },
-                    { 13,13,13,13,13,13,13,13,13,13 },
-                    { 13,13,13,13,13,13,13,13,13,13 }
+                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
+                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
+                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
+                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeTurnTopLeftTopRight, SpriteEnum.LandscapeRoadUp, SpriteEnum.LandscapeRoadUp, SpriteEnum.LandscapeRoadUp },
+                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
+                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
                 }
 
             };
@@ -123,7 +133,10 @@ namespace TowerDefenseColab
                 _phaseManager.Render(_backBuffer);
 
                 // render logs
-                RenderLogs(_backBuffer);
+                if (_showLogs)
+                {
+                    RenderLogs(_backBuffer);
+                }
 
                 _backBuffer.Render();
                 _backBuffer.Render(CreateGraphics());
@@ -138,7 +151,11 @@ namespace TowerDefenseColab
 
         private void RenderLogs(BufferedGraphics backBuffer)
         {
-            backBuffer.Graphics.DrawString(_applicationLogger.Logs[0], _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlackBrush, 20, 50);
+            int logNumber = 0;
+            foreach (string log in _applicationLogger.Logs)
+            {
+                backBuffer.Graphics.DrawString(log, _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlackBrush, 20, 50 + (logNumber++ * 20));
+            }
         }
 
         private void GameWindow_FormClosed(object sender, FormClosedEventArgs e)

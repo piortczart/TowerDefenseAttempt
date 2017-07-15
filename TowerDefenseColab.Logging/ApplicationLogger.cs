@@ -12,6 +12,7 @@ namespace TowerDefenseColab.Logging
             Error
         }
 
+        private int _totalCount = 0;
         public List<string> Logs { get; }
 
         public ApplicationLogger()
@@ -36,11 +37,12 @@ namespace TowerDefenseColab.Logging
 
         private string GetLogFormatted(ApplicationLogType logType, string message, Exception exception = null)
         {
-            return $"{DateTime.Now:HH:mm:ss.fff} {logType}: {message} {exception}";
+            return $"{_totalCount} {DateTime.Now:HH:mm:ss.fff} {logType}: {message} {exception}";
         }
 
         public void AddLog(string log)
         {
+            _totalCount++;
             Logs.Add(log);
             if (Logs.Count > 10)
             {

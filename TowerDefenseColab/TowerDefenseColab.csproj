@@ -66,6 +66,7 @@
     <Compile Include="GameObjects\AnimationInfo.cs" />
     <Compile Include="GameObjects\EnemyBase.cs" />
     <Compile Include="GameObjects\EnemyFactory.cs" />
+    <Compile Include="GameObjects\EnemyNew.cs" />
     <Compile Include="GameObjects\EnemySettings.cs" />
     <Compile Include="GameObjects\EnemyTypeEnum.cs" />
     <Compile Include="GameObjects\GameObjectBase.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="GameObjects\TowerSettings.cs" />
     <Compile Include="GameObjects\TowerStateEnum.cs" />
     <Compile Include="GameObjects\Weapon.cs" />
+    <Compile Include="GamePhases\GameLevels\FontsAndColors.cs" />
     <Compile Include="GamePhases\GameLevels\GameLevel.cs" />
     <Compile Include="GameLoopMethods.cs" />
     <Compile Include="GamePhases\GameLevels\GameLevelFactory.cs" />
@@ -94,8 +96,11 @@
     <Compile Include="GameWindow.Designer.cs">
       <DependentUpon>GameWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="GamePhases\GraphicsHelper.cs" />
-    <Compile Include="GamePhases\GraphicsTracker.cs" />
+    <Compile Include="GraphicsPoo\GraphicsHelper.cs" />
+    <Compile Include="GraphicsPoo\GraphicsTracker.cs" />
+    <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteEnum.cs" />
+    <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteDetails.cs" />
+    <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteSheets.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -127,18 +132,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\bglvl2Path.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\bglvl1Path.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\bglvl2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\bglvl1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\boom.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -271,7 +264,12 @@
     <Content Include="Assets\sprite1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Spritesheets\landscape_sheet.png" />
+    <Content Include="Assets\Spritesheets\landscape_sheet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Spritesheets\cars_sheet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\squareOfPew.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -3,25 +3,18 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using TowerDefenseColab.Assets;
 using TowerDefenseColab.GameMechanisms;
 using TowerDefenseColab.GameObjects;
-using TowerDefenseColab.Logging;
+using TowerDefenseColab.GraphicsPoo;
+using TowerDefenseColab.GraphicsPoo.SpriteUnicorn;
 
 namespace TowerDefenseColab.GamePhases.GameLevels
 {
-    public class FontsAndColors
-    {
-        public Font MonospaceFont = new Font("monospace", 20);
-        public Font MonospaceFontSmaller = new Font("monospace", 10);
-        public Brush BlueBrush = new SolidBrush(Color.Blue);
-        public Brush BlackBrush = new SolidBrush(Color.Black);
-    }
-
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class GameLevel : GamePhase
     {
-        private Image _background;
         public readonly List<EnemyBase> CurrentMonsters = new List<EnemyBase>();
+        public readonly List<EnemyNew> CurrentEnemiesNew = new List<EnemyNew>();
         private readonly GameLevelSettings _settings;
         private readonly EnemyFactory _enemyFactory;
         private TimeSpan _lastSpawn = TimeSpan.MinValue;
@@ -33,10 +26,9 @@ namespace TowerDefenseColab.GamePhases.GameLevels
         private GameState _gameState = GameState.Paused;
         private readonly List<TowerBase> _towers = new List<TowerBase>();
         private Resources _resources;
-        private readonly AssetsFactory _assetsFactory;
         private readonly GraphicsTracker _graphicsTracker;
-        private readonly ApplicationLogger _logger;
         private readonly FontsAndColors _fontsAndColors;
+        private readonly SpriteSheets _spriteSheets;
         private readonly StringFormat _stringFormatCenter;
 
         public GameLevel(
@@ -45,21 +37,19 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             GamePhaseManager gamePhaseManager,
             InputManager inputManager,
             TowerFactory towerFactory,
-            AssetsFactory assetsFactory,
             GraphicsTracker graphicsTracker,
             MouseDragControl mouseDragControl,
-            ApplicationLogger logger,
-            FontsAndColors fontsAndColors)
+            FontsAndColors fontsAndColors,
+            SpriteSheets spriteSheets)
         {
             _settings = settings;
             _enemyFactory = enemyFactory;
             _gamePhaseManager = gamePhaseManager;
             _inputManager = inputManager;
             _towerFactory = towerFactory;
-            _assetsFactory = assetsFactory;
             _graphicsTracker = graphicsTracker;
-            _logger = logger;
             _fontsAndColors = fontsAndColors;
+            _spriteSheets = spriteSheets;
             _stringFormatCenter = new StringFormat
             {
                 LineAlignment = StringAlignment.Center,
@@ -70,6 +60,8 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             inputManager.OnClick += OnMouseClick;
             inputManager.OnMouseDragged += mouseDragControl.InputManagerOnMouseDrag;
             inputManager.OnMouseReleased += mouseDragControl.InputManagerOnMouseRelease;
+
+            CurrentEnemiesNew.Add(new EnemyNew(_spriteSheets.GetSprite(SpriteEnum.VehicleVanBottomRight), graphicsTracker));
         }
 
         private void OnMouseClick(MouseEventArgs mouseEventArgs)
@@ -151,14 +143,13 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             _towers.Clear();
             _gameState = GameState.Paused;
             _monstersLeftToSpawn = new Queue<EnemyTypeEnum>(_settings.EnemyTypesToSpawn);
-            _background = Image.FromFile($@"Assets\bglvl{_settings.LevelNumber}Path.png");
             _resources = new Resources(_settings.StartingResources);
         }
 
         /// <summary>
         /// Converts the map coordiates to real graphics coords.
         /// </summary>
-        public static Point ConvertMapToReal(int x, int y, Point offset)
+        private static Point ConvertMapToReal(int x, int y, Point offset)
         {
             int tileAdjustmentX = 64;
             int tileAdjustmentY = 32;
@@ -171,11 +162,10 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             return new Point(rx, ry);
         }
 
-
         public override void Render(BufferedGraphics g)
         {
             // Clearing the screen.
-            g.Graphics.DrawImage(_background, 0, 0);
+            g.Graphics.FillRectangle(Brushes.Black, _graphicsTracker.DisplayRectangle);
 
             // Drawing the map using tiles.
             RenderMap(g);
@@ -184,6 +174,11 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             foreach (EnemyBase monster in CurrentMonsters)
             {
                 monster.Render(g);
+            }
+
+            foreach (EnemyNew enemyNew in CurrentEnemiesNew)
+            {
+                enemyNew.Render(g);
             }
 
             // Draw all towers.
@@ -226,12 +221,12 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             {
                 for (int x = _settings.Map.Layout.GetLength(1) - 1; x >= 0; x--)
                 {
-                    Bitmap aTile = _assetsFactory.GetBackground(_settings.Map.Layout[y, x]);
-                    if (aTile != null)
+                    SpriteDetails sprite = _spriteSheets.GetSprite(_settings.Map.Layout[y, x]);
+                    if (sprite != null)
                     {
-                        Point p = ConvertMapToReal(x, y, _graphicsTracker.DisplayOffset);
-                        graphics.Graphics.DrawString(y + "," + x, _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlackBrush, p);
-                        graphics.Graphics.DrawImage(aTile, p);
+                        Point pointOnScreen = ConvertMapToReal(x, y, _graphicsTracker.DisplayOffset);
+                        graphics.Graphics.DrawString(y + "," + x, _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlackBrush, pointOnScreen);
+                        graphics.Graphics.DrawImage(sprite.Bitmap, pointOnScreen);
                     }
                 }
             }
@@ -260,6 +255,11 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             foreach (TowerBase tower in _towers)
             {
                 tower.Update(timeDelta);
+            }
+
+            foreach (EnemyNew enemyNew in CurrentEnemiesNew)
+            {
+                enemyNew.Update(timeDelta);
             }
 
             foreach (EnemyBase monster in CurrentMonsters.ToList())

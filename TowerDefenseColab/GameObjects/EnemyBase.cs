@@ -105,13 +105,13 @@ namespace TowerDefenseColab.GameObjects
                 }
 
                 if (target.Y > Math.Round(monsterLocation.Y))
-                    LocationCenter = new System.Drawing.PointF(LocationCenter.X + deltaX, LocationCenter.Y + deltaY);
+                    LocationCenter = new PointF(LocationCenter.X + deltaX, LocationCenter.Y + deltaY);
                 else if (target.Y < Math.Round(monsterLocation.Y))
-                    LocationCenter = new System.Drawing.PointF(LocationCenter.X + deltaX, LocationCenter.Y - deltaY);
+                    LocationCenter = new PointF(LocationCenter.X + deltaX, LocationCenter.Y - deltaY);
                 else if (target.X > Math.Round(monsterLocation.X))
-                    LocationCenter = new System.Drawing.PointF(LocationCenter.X + deltaX, LocationCenter.Y + deltaY);
+                    LocationCenter = new PointF(LocationCenter.X + deltaX, LocationCenter.Y + deltaY);
                 else if (target.X < Math.Round(monsterLocation.X))
-                    LocationCenter = new System.Drawing.PointF(LocationCenter.X - deltaX, LocationCenter.Y + deltaY);
+                    LocationCenter = new PointF(LocationCenter.X - deltaX, LocationCenter.Y + deltaY);
             }
             else
             {

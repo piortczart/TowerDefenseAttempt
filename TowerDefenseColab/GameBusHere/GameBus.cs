@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab.GameBusHere
 {
-
     public class GameBus
     {
+        private readonly ApplicationLogger _logger;
+        private readonly List<ISubscriber> _subscribers = new List<ISubscriber>();
+
         interface ISubscriber
         {
             bool Publish(IGameMessage message);
@@ -30,7 +33,10 @@ namespace TowerDefenseColab.GameBusHere
             }
         }
 
-        private readonly List<ISubscriber> _subscribers = new List<ISubscriber>();
+        public GameBus(ApplicationLogger logger)
+        {
+            _logger = logger;
+        }
 
         /// <summary>
         /// Subscriber to a specific message type. The action will be called each time the a message of the specific type is received.
@@ -53,7 +59,7 @@ namespace TowerDefenseColab.GameBusHere
                     anyoneReceived = true;
                 }
             }
-
+            _logger.LogDebug($"{message.GetType().Name} received: {anyoneReceived}");
         }
     }
 }

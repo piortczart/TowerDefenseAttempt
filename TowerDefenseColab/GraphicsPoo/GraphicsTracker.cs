@@ -1,12 +1,15 @@
 ﻿using System.Drawing;
 using TowerDefenseColab.GameBusHere;
 
-namespace TowerDefenseColab
+namespace TowerDefenseColab.GraphicsPoo
 {
+    /// <summary>
+    /// Keeps track of some display settings.
+    /// </summary>
     public class GraphicsTracker
     {
-        public Rectangle DisplayRectangle { get; set; }
-        public Point DisplayOffset { get { return _displayOffset; } }
+        public Rectangle DisplayRectangle { get; private set; }
+        public Point DisplayOffset => _displayOffset;
 
         Point _displayOffset = new Point(200, 200);
 

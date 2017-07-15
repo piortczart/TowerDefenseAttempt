@@ -26,7 +26,7 @@ namespace TowerDefenseColab.GameObjects
                             Health = 3,
                             Speed = 100,
                             ResourcesForKilling = 1
-                        }, 
+                        },
                         "Assets\\sprite1.png",
                         new AnimationInfo()
                         {

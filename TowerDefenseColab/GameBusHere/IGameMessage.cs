@@ -1,4 +1,4 @@
-﻿namespace TowerDefenseColab
+﻿namespace TowerDefenseColab.GameBusHere
 {
     public interface IGameMessage
     {
