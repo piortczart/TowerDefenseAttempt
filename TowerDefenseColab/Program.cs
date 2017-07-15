@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
 using StructureMap;
+using TowerDefenseColab.GameBusHere;
 using TowerDefenseColab.GameObjects;
 using TowerDefenseColab.GamePhases;
 using TowerDefenseColab.GamePhases.GameLevels;
+using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab
 {
@@ -36,6 +38,11 @@ namespace TowerDefenseColab
                 _.ForSingletonOf<GraphicsTracker>();
                 _.ForSingletonOf<GameBus>();
                 _.ForSingletonOf<MouseDragControl>();
+                _
+                .ForSingletonOf<ApplicationLogger>()
+                .Use<ApplicationLogger>()
+                .Ctor<Action<string>>("action")
+                .Is(x => { });
             });
         }
     }

@@ -8,10 +8,10 @@ using TowerDefenseColab.GameBusHere;
 using TowerDefenseColab.GameObjects;
 using TowerDefenseColab.GamePhases;
 using TowerDefenseColab.GamePhases.GameLevels;
+using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab
 {
-
     public partial class GameWindow : Form
     {
         private readonly GamePhaseManager _phaseManager;
@@ -20,17 +20,20 @@ namespace TowerDefenseColab
         private readonly GameLevelFactory _gameLevelFactory;
         private readonly InputManager _inputManager;
         private readonly GameBus _bus;
-        BufferedGraphics backBuffer;
-        private GraphicsTracker _graphicsTracker;
+        private readonly ApplicationLogger _applicationLogger;
+        private BufferedGraphics _backBuffer;
+        private bool _isMouseDown;
+        private readonly FontsAndColors _fontsAndColors;
 
         public GameWindow(GamePhaseManager phaseManager, StartScreen startScreen, GameLevelFactory gameLevelFactory,
-            InputManager inputManager, GraphicsTracker graphicsTracker, GameBus bus)
+            InputManager inputManager, GameBus bus, ApplicationLogger applicationLogger, FontsAndColors fontsAndColors)
         {
-            _graphicsTracker = graphicsTracker;
             _phaseManager = phaseManager;
             _startScreen = startScreen;
             _gameLevelFactory = gameLevelFactory;
             _bus = bus;
+            _applicationLogger = applicationLogger;
+            _fontsAndColors = fontsAndColors;
             _inputManager = inputManager;
             _inputManager.SetMousePointFunction(() => PointToClient(Cursor.Position));
 
@@ -43,20 +46,19 @@ namespace TowerDefenseColab
             Show();
         }
 
+        /// <summary>
+        /// Initializes the back buffer. Needs to be called when resizing the window.
+        /// </summary>
         public void InitBackBuffer(Rectangle displayRectangle)
         {
-            if (backBuffer != null)
-            {
-                backBuffer.Dispose();
-            }
+            _backBuffer?.Dispose();
             BufferedGraphicsContext myContext = BufferedGraphicsManager.Current;
-            backBuffer = myContext.Allocate(CreateGraphics(), displayRectangle);
+            _backBuffer = myContext.Allocate(CreateGraphics(), displayRectangle);
         }
 
         private void InitGame()
         {
-            //var waypoints1 = new List<PointF>() { new PointF(260, 270), new PointF(260, 120), new PointF(575, 120), new PointF(575, 270), new PointF(800, 270) };
-            //var waypoints2 = new List<PointF>() { new PointF(260, 270), new PointF(260, 120), new PointF(575, 120), new PointF(575, 270), new PointF(365, 270), new PointF(365, 510), new PointF(680, 510), new PointF(680, 160), new PointF(800, 160) };
+            _applicationLogger.LogInfo("Initializing...");
 
             // Create the pahses.
             // TODO: should it be even done here or by the PhageManager class itself?
@@ -64,7 +66,7 @@ namespace TowerDefenseColab
 
             var map = new LevelMap
             {
-                Layout = new int[10, 10]
+                Layout = new[,]
                 {
                     { 13,32,13,13,13,13,13,13,13,13 },
                     { 13,32,13,13,13,13,13,13,13,13 },
@@ -117,18 +119,26 @@ namespace TowerDefenseColab
                 var currentTimeSpan = stopWatch.Elapsed;
                 _phaseManager.Update(currentTimeSpan - last);
 
-                // render
-                _phaseManager.Render(backBuffer);
+                // render game phase
+                _phaseManager.Render(_backBuffer);
 
-                backBuffer.Render();
-                backBuffer.Render(CreateGraphics());
+                // render logs
+                RenderLogs(_backBuffer);
+
+                _backBuffer.Render();
+                _backBuffer.Render(CreateGraphics());
 
                 Application.DoEvents();
 
                 last = currentTimeSpan;
             }
 
-            backBuffer.Dispose();
+            _backBuffer.Dispose();
+        }
+
+        private void RenderLogs(BufferedGraphics backBuffer)
+        {
+            backBuffer.Graphics.DrawString(_applicationLogger.Logs[0], _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlackBrush, 20, 50);
         }
 
         private void GameWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -151,22 +161,21 @@ namespace TowerDefenseColab
             _inputManager.MouseClicked(e);
         }
 
-        private bool isMouseDown = false;
 
         private void GameWindow_MouseDown(object sender, MouseEventArgs e)
         {
-            isMouseDown = true;
+            _isMouseDown = true;
         }
 
         private void GameWindow_MouseUp(object sender, MouseEventArgs e)
         {
-            isMouseDown = false;
+            _isMouseDown = false;
             _inputManager.MouseRelease(e);
         }
 
         private void GameWindow_MouseMove(object sender, MouseEventArgs e)
         {
-            if (isMouseDown)
+            if (_isMouseDown)
             {
                 _inputManager.MouseDrag(e);
             }

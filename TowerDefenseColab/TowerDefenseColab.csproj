@@ -44,6 +44,7 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.3.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,6 +82,7 @@
     <Compile Include="GamePhases\GameLevels\GameLevelActionLimiter.cs" />
     <Compile Include="GamePhases\GameLevels\GameLevelTime.cs" />
     <Compile Include="GamePhases\GameLevels\LevelMap.cs" />
+    <Compile Include="GamePhases\GameLevels\MouseDragControl.cs" />
     <Compile Include="GamePhases\GamePhase.cs" />
     <Compile Include="GamePhases\GamePhaseEnum.cs" />
     <Compile Include="GamePhases\GamePhaseManager.cs" />
@@ -269,6 +271,7 @@
     <Content Include="Assets\sprite1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Spritesheets\landscape_sheet.png" />
     <Content Include="Assets\squareOfPew.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -276,7 +279,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\TowerDefenseColab.Logging\TowerDefenseColab.Logging.csproj">
+      <Project>{07F30A3B-EC3A-4F61-8C85-FD5BE4300A3E}</Project>
+      <Name>TowerDefenseColab.Logging</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

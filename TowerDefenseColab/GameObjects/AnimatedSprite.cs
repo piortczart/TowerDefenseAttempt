@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TowerDefenseColab.GameMechanisms;
 
 namespace TowerDefenseColab.GameObjects
@@ -12,13 +9,13 @@ namespace TowerDefenseColab.GameObjects
     {
         public List<Animation> Animations { get; set; }
         public Animation CurrentAnimation { get; set; }
-        
+
         protected Size FrameSize;
         private Point _location;
 
         public AnimatedSprite()
         {
-            
+
         }
 
         public AnimatedSprite(Size frameSize, List<Animation> animations)
@@ -35,15 +32,15 @@ namespace TowerDefenseColab.GameObjects
                 FrameSize.Width,
                 FrameSize.Height);
             Rectangle destRectangle = new Rectangle(
-                _location, 
+                _location,
                 FrameSize);
-            
+
             g.Graphics.DrawImage(Sprite, destRectangle, sourceRectangle, GraphicsUnit.Pixel);
         }
 
         public override void Init()
         {
-            
+
         }
 
         public override void Update(TimeSpan timeDelta)

@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TowerDefenseColab", "TowerDefenseColab\TowerDefenseColab.csproj", "{B8930660-ADD1-4C26-AB77-7E2FC0221EC2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TowerDefenseColab.Tests", "TowerDefenseColab.Tests\TowerDefenseColab.Tests.csproj", "{0B682CD9-29FA-42AB-AD55-A5C230EDE42E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TowerDefenseColab.Logging", "TowerDefenseColab.Logging\TowerDefenseColab.Logging.csproj", "{07F30A3B-EC3A-4F61-8C85-FD5BE4300A3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{0B682CD9-29FA-42AB-AD55-A5C230EDE42E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B682CD9-29FA-42AB-AD55-A5C230EDE42E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B682CD9-29FA-42AB-AD55-A5C230EDE42E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07F30A3B-EC3A-4F61-8C85-FD5BE4300A3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F30A3B-EC3A-4F61-8C85-FD5BE4300A3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07F30A3B-EC3A-4F61-8C85-FD5BE4300A3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07F30A3B-EC3A-4F61-8C85-FD5BE4300A3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

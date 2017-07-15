@@ -4,43 +4,18 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using TowerDefenseColab.Assets;
-using TowerDefenseColab.GameBusHere;
 using TowerDefenseColab.GameMechanisms;
 using TowerDefenseColab.GameObjects;
+using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab.GamePhases.GameLevels
 {
-    public class MouseDragControl
+    public class FontsAndColors
     {
-        private GameBus _bus;
-        private Point _lastMouseLocationDrag = new Point(0, 0);
-        public MouseDragControl(GameBus bus)
-        {
-            _bus = bus;
-        }
-
-        public void InputManagerOnMouseRelease(MouseEventArgs e)
-        {
-            /// When the mouse is released, we want to reset it's last location.
-            _lastMouseLocationDrag = new Point(0, 0);
-        }
-
-        public void InputManagerOnMouseDrag(MouseEventArgs e)
-        {
-            // When the mouse is dragged, we want to adjust the offset to move the rendered map/stuff.
-            if (_lastMouseLocationDrag.X != 0)
-            {
-                int dx = e.Location.X - _lastMouseLocationDrag.X;
-                int dy = e.Location.Y - _lastMouseLocationDrag.Y;
-
-                _bus.Publish(new MessageMouseDragged
-                {
-                    ChangeX = dx,
-                    ChangeY = dy
-                });
-            }
-            _lastMouseLocationDrag = e.Location;
-        }
+        public Font MonospaceFont = new Font("monospace", 20);
+        public Font MonospaceFontSmaller = new Font("monospace", 10);
+        public Brush BlueBrush = new SolidBrush(Color.Blue);
+        public Brush BlackBrush = new SolidBrush(Color.Black);
     }
 
     public class GameLevel : GamePhase
@@ -59,12 +34,22 @@ namespace TowerDefenseColab.GamePhases.GameLevels
         private readonly List<TowerBase> _towers = new List<TowerBase>();
         private Resources _resources;
         private readonly AssetsFactory _assetsFactory;
-        private MouseDragControl _mouseDragControl;
-        private GraphicsTracker _graphicsTracker;
-        private StringFormat _stringFormatCenter;
+        private readonly GraphicsTracker _graphicsTracker;
+        private readonly ApplicationLogger _logger;
+        private readonly FontsAndColors _fontsAndColors;
+        private readonly StringFormat _stringFormatCenter;
 
-        public GameLevel(GameLevelSettings settings, EnemyFactory enemyFactory, GamePhaseManager gamePhaseManager,
-            InputManager inputManager, TowerFactory towerFactory, AssetsFactory assetsFactory, GraphicsTracker graphicsTracker, MouseDragControl mouseDragControl)
+        public GameLevel(
+            GameLevelSettings settings,
+            EnemyFactory enemyFactory,
+            GamePhaseManager gamePhaseManager,
+            InputManager inputManager,
+            TowerFactory towerFactory,
+            AssetsFactory assetsFactory,
+            GraphicsTracker graphicsTracker,
+            MouseDragControl mouseDragControl,
+            ApplicationLogger logger,
+            FontsAndColors fontsAndColors)
         {
             _settings = settings;
             _enemyFactory = enemyFactory;
@@ -72,16 +57,19 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             _inputManager = inputManager;
             _towerFactory = towerFactory;
             _assetsFactory = assetsFactory;
-            _mouseDragControl = mouseDragControl;
             _graphicsTracker = graphicsTracker;
-            _stringFormatCenter = new StringFormat();
-            _stringFormatCenter.LineAlignment = StringAlignment.Center;
-            _stringFormatCenter.Alignment = StringAlignment.Center;
+            _logger = logger;
+            _fontsAndColors = fontsAndColors;
+            _stringFormatCenter = new StringFormat
+            {
+                LineAlignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center
+            };
 
             inputManager.OnKeyReleased += OnKeyRelease;
             inputManager.OnClick += OnMouseClick;
-            inputManager.OnMouseDragged += _mouseDragControl.InputManagerOnMouseDrag;
-            inputManager.OnMouseReleased += _mouseDragControl.InputManagerOnMouseRelease;
+            inputManager.OnMouseDragged += mouseDragControl.InputManagerOnMouseDrag;
+            inputManager.OnMouseReleased += mouseDragControl.InputManagerOnMouseRelease;
         }
 
         private void OnMouseClick(MouseEventArgs mouseEventArgs)
@@ -106,7 +94,7 @@ namespace TowerDefenseColab.GamePhases.GameLevels
                     CurrentMonsters.Clear();
                     return;
                 }
-                else if (_gameState == GameState.Lost)
+                if (_gameState == GameState.Lost)
                 {
                     _gamePhaseManager.LevelEndedPlayerLost(this);
                     CurrentMonsters.Clear();
@@ -167,13 +155,16 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             _resources = new Resources(_settings.StartingResources);
         }
 
+        /// <summary>
+        /// Converts the map coordiates to real graphics coords.
+        /// </summary>
         public static Point ConvertMapToReal(int x, int y, Point offset)
         {
-            var blaX = 64;
-            var blaY = 32;
+            int tileAdjustmentX = 64;
+            int tileAdjustmentY = 32;
 
-            int rx = x * blaX + y * blaX;
-            int ry = -x * blaY + y * blaY;
+            int rx = x * tileAdjustmentX + y * tileAdjustmentX;
+            int ry = -x * tileAdjustmentY + y * tileAdjustmentY;
             rx += offset.X;
             ry += offset.Y;
 
@@ -187,19 +178,7 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             g.Graphics.DrawImage(_background, 0, 0);
 
             // Drawing the map using tiles.
-            for (int y = 0; y < _settings.Map.Layout.GetLength(0); y++)
-            {
-                for (int x = _settings.Map.Layout.GetLength(1) - 1; x >= 0; x--)
-                {
-                    Bitmap aTile = _assetsFactory.GetBackground(_settings.Map.Layout[y, x]);
-                    if (aTile != null)
-                    {
-                        Point p = ConvertMapToReal(x, y, _graphicsTracker.DisplayOffset);
-                        g.Graphics.DrawString(y + "," + x, new Font(FontFamily.GenericMonospace, 12), Brushes.Black, p);
-                        g.Graphics.DrawImage(aTile, p);
-                    }
-                }
-            }
+            RenderMap(g);
 
             // Draw all monsters.
             foreach (EnemyBase monster in CurrentMonsters)
@@ -216,30 +195,46 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             // Some extra info depending on the game state.
             if (_gameState == GameState.Won)
             {
-                g.Graphics.DrawString("Wow. You won.", new Font("monospace", 20), new SolidBrush(Color.Blue), _graphicsTracker.DisplayRectangle, _stringFormatCenter);
+                g.Graphics.DrawString("Wow. You won.", _fontsAndColors.MonospaceFont, _fontsAndColors.BlueBrush, _graphicsTracker.DisplayRectangle, _stringFormatCenter);
                 return;
             }
-            else if (_gameState == GameState.Lost)
+            if (_gameState == GameState.Lost)
             {
-                g.Graphics.DrawString("You noob. You lost. Again.", new Font("monospace", 20), new SolidBrush(Color.Blue), _graphicsTracker.DisplayRectangle, _stringFormatCenter);
+                g.Graphics.DrawString("You noob. You lost. Again.", _fontsAndColors.MonospaceFont, _fontsAndColors.BlueBrush, _graphicsTracker.DisplayRectangle, _stringFormatCenter);
                 return;
             }
 
             // Show pause info.
             if (_gameState == GameState.Paused)
             {
-                g.Graphics.DrawString("! PAUSED !", new Font("monospace", 20),
-                    new SolidBrush(Color.Blue), _graphicsTracker.DisplayRectangle, _stringFormatCenter);
+                g.Graphics.DrawString("! PAUSED !", _fontsAndColors.MonospaceFont, _fontsAndColors.BlueBrush, _graphicsTracker.DisplayRectangle, _stringFormatCenter);
 
                 g.Graphics.DrawString($"space - pause{Environment.NewLine}1 - new tower (click to place)",
-                    new Font("monospace", 10), new SolidBrush(Color.Blue), 370, 500);
+                    _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlueBrush, 370, 500);
             }
 
             // Draw time and resources.
             g.Graphics.DrawString($"{_time.GetCurrent()}",
-                new Font("monospace", 10), new SolidBrush(Color.Blue), 10, 0);
+                _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlueBrush, 10, 0);
             g.Graphics.DrawString($"${_resources.Amount}",
-                new Font("monospace", 10), new SolidBrush(Color.Blue), _graphicsTracker.DisplayRectangle.Width - 100, 20);
+                _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlueBrush, _graphicsTracker.DisplayRectangle.Width - 100, 20);
+        }
+
+        private void RenderMap(BufferedGraphics graphics)
+        {
+            for (int y = 0; y < _settings.Map.Layout.GetLength(0); y++)
+            {
+                for (int x = _settings.Map.Layout.GetLength(1) - 1; x >= 0; x--)
+                {
+                    Bitmap aTile = _assetsFactory.GetBackground(_settings.Map.Layout[y, x]);
+                    if (aTile != null)
+                    {
+                        Point p = ConvertMapToReal(x, y, _graphicsTracker.DisplayOffset);
+                        graphics.Graphics.DrawString(y + "," + x, _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlackBrush, p);
+                        graphics.Graphics.DrawImage(aTile, p);
+                    }
+                }
+            }
         }
 
         public override void Update(TimeSpan timeDelta)

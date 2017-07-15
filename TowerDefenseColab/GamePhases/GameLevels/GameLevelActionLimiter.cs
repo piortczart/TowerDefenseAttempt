@@ -26,13 +26,5 @@ namespace TowerDefenseColab.GamePhases.GameLevels
         {
             _lastAction = _lastCanDo;
         }
-
-        //public bool AttemptStuff()
-        //{
-        //    TimeSpan now = _time.GetCurrent();
-        //    bool result = _lastAction + _frequency < now;
-        //    _lastAction = now;
-        //    return result;
-        //}
     }
 }
