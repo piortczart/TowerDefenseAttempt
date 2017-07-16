@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using StructureMap;
 using TowerDefenseColab.GameBusHere;
 using TowerDefenseColab.GameObjects;
+using TowerDefenseColab.GameObjects.Enemies.Old;
 using TowerDefenseColab.GamePhases;
 using TowerDefenseColab.GamePhases.GameLevels;
 using TowerDefenseColab.GraphicsPoo;

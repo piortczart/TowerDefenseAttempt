@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using TowerDefenseColab.GameBusHere;
+using TowerDefenseColab.GameBusHere.Messages;
 
 namespace TowerDefenseColab.GamePhases.GameLevels
 {

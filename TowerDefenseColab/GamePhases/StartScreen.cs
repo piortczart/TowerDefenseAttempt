@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
+using TowerDefenseColab.GameBusHere;
+using TowerDefenseColab.GameBusHere.Messages;
+using TowerDefenseColab.GraphicsPoo;
 
 namespace TowerDefenseColab.GamePhases
 {
     public class StartScreen : GamePhase
     {
-        private readonly GamePhaseManager _gamePhaseManager;
         private readonly Image _background;
+        private GraphicsTracker _graphicsTracker;
 
-        public StartScreen(InputManager inputManager, GamePhaseManager gamePhaseManager)
+        public StartScreen(GamePhaseManager gamePhaseManager, GameBus bus, GraphicsTracker graphicsTracker)
         {
-            _gamePhaseManager = gamePhaseManager;
-            inputManager.OnClick += InputManagerOnOnClick;
+            _graphicsTracker = graphicsTracker;
             _background = Image.FromFile(@"Assets\menu.png");
-        }
 
-        private void InputManagerOnOnClick(MouseEventArgs mouseEventArgs)
-        {
-            // Only respond to input when visible.
-            if (IsVisible)
+            bus.Subscribe<MouseClicked>(e =>
             {
-                _gamePhaseManager.ChangeActiveGamePhase(GamePhaseEnum.Level001);
-            }
+                if (IsVisible)
+                {
+                    gamePhaseManager.ChangeActiveGamePhase(GamePhaseEnum.Level001);
+                }
+            });
         }
 
         public override void Init()
@@ -35,6 +35,7 @@ namespace TowerDefenseColab.GamePhases
 
         public override void Render(BufferedGraphics g)
         {
+            g.Graphics.FillRectangle(Brushes.Gray, _graphicsTracker.DisplayRectangle);
             g.Graphics.DrawImage(_background, 0, 0);
         }
     }

@@ -7,6 +7,22 @@ namespace TowerDefenseColab.GraphicsPoo
     public class GraphicsHelper
     {
         /// <summary>
+        /// Converts the map coordiates to real graphics coords.
+        /// </summary>
+        public static Point ConvertMapToReal(int x, int y, Point offset)
+        {
+            int tileAdjustmentX = 64;
+            int tileAdjustmentY = 32;
+
+            int rx = x * tileAdjustmentX + y * tileAdjustmentX;
+            int ry = -x * tileAdjustmentY + y * tileAdjustmentY;
+            rx += offset.X;
+            ry += offset.Y;
+
+            return new Point(rx, ry);
+        }
+
+        /// <summary>
         /// Resize the image to the specified width and height.
         /// </summary>
         /// <param name="image">The image to resize.</param>

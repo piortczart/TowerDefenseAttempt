@@ -59,24 +59,31 @@
     <Compile Include="Assets\AssetsFactory.cs" />
     <Compile Include="GameBusHere\GameBus.cs" />
     <Compile Include="GameBusHere\IGameMessage.cs" />
-    <Compile Include="GameBusHere\MessageMouseDragged.cs" />
-    <Compile Include="GameBusHere\MessageWindowResized.cs" />
+    <Compile Include="GameBusHere\Messages\EnemyDespawned.cs" />
+    <Compile Include="GameBusHere\Messages\GameStateChange.cs" />
+    <Compile Include="GameBusHere\Messages\MessageMouseDragged.cs" />
+    <Compile Include="GameBusHere\Messages\MessageWindowResized.cs" />
+    <Compile Include="GameBusHere\Messages\MouseClicked.cs" />
     <Compile Include="GameMechanisms\Animation.cs" />
     <Compile Include="GameMechanisms\Resources.cs" />
     <Compile Include="GameObjects\AnimationInfo.cs" />
-    <Compile Include="GameObjects\EnemyBase.cs" />
-    <Compile Include="GameObjects\EnemyFactory.cs" />
-    <Compile Include="GameObjects\EnemyNew.cs" />
-    <Compile Include="GameObjects\EnemySettings.cs" />
-    <Compile Include="GameObjects\EnemyTypeEnum.cs" />
+    <Compile Include="GameBusHere\Messages\EnemyReachedGoal.cs" />
+    <Compile Include="GameObjects\EntitysSpriteDirected.cs" />
+    <Compile Include="GameObjects\EntitysHealth.cs" />
+    <Compile Include="GameObjects\Enemies\Old\EnemyBase.cs" />
+    <Compile Include="GameObjects\Enemies\Old\EnemyFactory.cs" />
+    <Compile Include="GameObjects\Enemies\Enemy.cs" />
+    <Compile Include="GameObjects\Enemies\Old\EnemySettings.cs" />
+    <Compile Include="GameObjects\Enemies\EnemyTypeEnum.cs" />
     <Compile Include="GameObjects\GameObjectBase.cs" />
     <Compile Include="GameObjects\AnimatedSprite.cs" />
-    <Compile Include="GameObjects\TowerBase.cs" />
-    <Compile Include="GameObjects\TowerFactory.cs" />
-    <Compile Include="GameObjects\TowerSettings.cs" />
-    <Compile Include="GameObjects\TowerStateEnum.cs" />
+    <Compile Include="GameObjects\Towers\TowerBase.cs" />
+    <Compile Include="GameObjects\Towers\TowerFactory.cs" />
+    <Compile Include="GameObjects\Towers\TowerSettings.cs" />
+    <Compile Include="GameObjects\Towers\TowerStateEnum.cs" />
     <Compile Include="GameObjects\Weapon.cs" />
-    <Compile Include="GamePhases\GameLevels\FontsAndColors.cs" />
+    <Compile Include="GamePhases\GameLevels\EnemySpawner.cs" />
+    <Compile Include="GraphicsPoo\FontsAndColors.cs" />
     <Compile Include="GamePhases\GameLevels\GameLevel.cs" />
     <Compile Include="GameLoopMethods.cs" />
     <Compile Include="GamePhases\GameLevels\GameLevelFactory.cs" />
@@ -101,6 +108,7 @@
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteEnum.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteDetails.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteSheets.cs" />
+    <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteWithDirections.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -138,126 +146,6 @@
     <Content Include="Assets\circleOfDeath.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Landscape\landscape_00.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_01.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_02.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_03.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_04.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_05.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_06.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_07.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_08.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_09.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_10.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_11.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_12.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_13.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_14.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_15.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_16.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_17.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_18.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_19.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_20.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_21.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_22.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_23.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_24.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_25.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_26.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_27.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_28.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_29.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_30.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_31.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_32.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_33.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_34.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_35.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_36.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_37.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_38.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Landscape\landscape_39.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\menu.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -268,6 +156,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Spritesheets\cars_sheet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Spritesheets\towers_grey_sheet.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\squareOfPew.png">

@@ -5,9 +5,11 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using TowerDefenseColab.GameBusHere;
-using TowerDefenseColab.GameObjects;
+using TowerDefenseColab.GameBusHere.Messages;
+using TowerDefenseColab.GameObjects.Enemies;
 using TowerDefenseColab.GamePhases;
 using TowerDefenseColab.GamePhases.GameLevels;
+using TowerDefenseColab.GraphicsPoo;
 using TowerDefenseColab.GraphicsPoo.SpriteUnicorn;
 using TowerDefenseColab.Logging;
 
@@ -39,10 +41,7 @@ namespace TowerDefenseColab
             _inputManager.SetMousePointFunction(() => PointToClient(Cursor.Position));
             inputManager.OnKeyReleased += OnKeyRelease;
 
-            _bus.Subscribe<MessageWindowResized>(a =>
-            {
-                InitBackBuffer(a.DisplayRectangle);
-            });
+            _bus.Subscribe<MessageWindowResized>(a => { InitBackBuffer(a.DisplayRectangle); });
 
             InitializeComponent();
             Show();
@@ -78,38 +77,83 @@ namespace TowerDefenseColab
             // TODO: should it be even done here or by the PhageManager class itself?
             _phaseManager.Add(GamePhaseEnum.StartScreen, _startScreen);
 
-            var map = new LevelMap
-            {
-                Layout = new[,]
-                {
-                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
-                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
-                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
-                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeTurnTopLeftTopRight, SpriteEnum.LandscapeRoadUp, SpriteEnum.LandscapeRoadUp, SpriteEnum.LandscapeRoadUp },
-                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
-                    { SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass },
-                }
-
-            };
-
             _phaseManager.Add(GamePhaseEnum.Level001,
                 _gameLevelFactory.CreateLevel(new GameLevelSettings
                 {
-                    EnemyTypesToSpawn = new[] { EnemyTypeEnum.CircleOfDeath },
+                    EnemyTypesToSpawn = new[] { EnemyTypeEnum.BlueVan },
                     SpawnFrequency = TimeSpan.FromSeconds(1),
                     LevelNumber = 1,
                     StartingResources = 10,
                     Waypoints = new List<Point> { new Point(1, 0), new Point(1, 3) },
-                    Map = map
+                    Map = new LevelMap
+                    {
+                        Layout = new[,]
+                        {
+                            {
+                                SpriteEnum.LandscapeMinerals, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeTurnTopLeftTopRight,
+                                SpriteEnum.LandscapeRoadUp, SpriteEnum.LandscapeRoadUp, SpriteEnum.LandscapeRoadUp
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                        }
+                    }
                 }));
             _phaseManager.Add(GamePhaseEnum.Level002,
                 _gameLevelFactory.CreateLevel(new GameLevelSettings
                 {
-                    EnemyTypesToSpawn = Enumerable.Range(0, 20).Select(i => EnemyTypeEnum.CircleOfDeath),
+                    EnemyTypesToSpawn = Enumerable.Range(0, 20).Select(i => EnemyTypeEnum.BlueVan),
                     SpawnFrequency = TimeSpan.FromSeconds(1.5),
                     LevelNumber = 2,
                     StartingResources = 20,
-                    Waypoints = new List<Point> { new Point(1, 0), new Point(1, 3) },
+                    Waypoints = new List<Point> { new Point(2, 0), new Point(2, 5) },
+                    Map = new LevelMap
+                    {
+                        Layout = new[,]
+                        {
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                            {
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
+                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
+                            },
+                        }
+                    }
                 }));
 
             _phaseManager.ChangeActiveGamePhase(GamePhaseEnum.StartScreen);
@@ -154,7 +198,8 @@ namespace TowerDefenseColab
             int logNumber = 0;
             foreach (string log in _applicationLogger.Logs)
             {
-                backBuffer.Graphics.DrawString(log, _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlackBrush, 20, 50 + (logNumber++ * 20));
+                backBuffer.Graphics.DrawString(log, _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlackBrush, 20,
+                    50 + (logNumber++ * 20));
             }
         }
 
@@ -175,9 +220,8 @@ namespace TowerDefenseColab
 
         private void GameWindow_MouseClick(object sender, MouseEventArgs e)
         {
-            _inputManager.MouseClicked(e);
+            _bus.Publish(new MouseClicked(e));
         }
-
 
         private void GameWindow_MouseDown(object sender, MouseEventArgs e)
         {

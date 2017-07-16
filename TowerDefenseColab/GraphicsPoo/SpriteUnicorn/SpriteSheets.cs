@@ -12,6 +12,7 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
         {
             Bitmap sheetLandscape = assetsFactory.GetLandscapeSpritesheet();
             Bitmap sheetCars = assetsFactory.GetCarsSpritesheet();
+            Bitmap sheetTowers = assetsFactory.GetTowersSpritesheet();
 
             _spriteDetails = new Dictionary<SpriteEnum, SpriteDetails>
             {
@@ -22,7 +23,7 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
                     {
                         Spritesheet = sheetLandscape,
                         Location = new Rectangle(1193, 0, 132, 99),
-                        Anchor = new Point(0, 0)
+                        Anchor = new Point(1258, 66)
                     }
                 },
                 {
@@ -31,7 +32,7 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
                     {
                         Spritesheet = sheetLandscape,
                         Location = new Rectangle(928, 230, 132, 99),
-                        Anchor = new Point(0, 0)
+                        Anchor = new Point(994, 296)
                     }
                 },
                 {
@@ -40,7 +41,7 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
                     {
                         Spritesheet = sheetLandscape,
                         Location = new Rectangle(0, 0, 134, 100),
-                        Anchor = new Point(0, 0)
+                        Anchor = new Point(66, 66)
                     }
                 },
                 {
@@ -49,7 +50,7 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
                     {
                         Spritesheet = sheetLandscape,
                         Location = new Rectangle(1325, 0, 132, 99),
-                        Anchor = new Point(0, 0)
+                        Anchor = new Point(1391, 66)
                     }
                 },
                 {
@@ -58,7 +59,7 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
                     {
                         Spritesheet = sheetLandscape,
                         Location = new Rectangle(928, 329, 132, 99),
-                        Anchor = new Point(0, 0)
+                        Anchor = new Point(994, 395)
                     }
                 },
                 // CARS
@@ -67,8 +68,40 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
                     new SpriteDetails
                     {
                         Spritesheet = sheetCars,
-                        Location = new Rectangle(271, 64, 33, 31),
-                        Anchor = new Point(0, 0)
+                        Location = new Rectangle(271, 64, 33, 31)
+                    }
+                },
+                {
+                    SpriteEnum.VehicleVanBottomLeft,
+                    new SpriteDetails
+                    {
+                        Spritesheet = sheetCars,
+                        Location = new Rectangle(137, 431, 33, 31)
+                    }
+                },
+                {
+                    SpriteEnum.VehicleVanTopRight,
+                    new SpriteDetails
+                    {
+                        Spritesheet = sheetCars,
+                        Location = new Rectangle(526, 345, 33, 31)
+                    }
+                },
+                {
+                    SpriteEnum.VehicleVanTopLeft,
+                    new SpriteDetails
+                    {
+                        Spritesheet = sheetCars,
+                        Location = new Rectangle(137, 258, 33, 31)
+                    }
+                },
+                // TOWER
+                {
+                    SpriteEnum.Tower,
+                    new SpriteDetails
+                    {
+                        Spritesheet = sheetTowers,
+                        Location = new Rectangle(0, 308, 93, 99)
                     }
                 }
             };

@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using TowerDefenseColab.GameBusHere;
+using TowerDefenseColab.GameBusHere.Messages;
 
 namespace TowerDefenseColab.GraphicsPoo
 {

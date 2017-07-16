@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace TowerDefenseColab.Assets
 {
@@ -14,6 +13,12 @@ namespace TowerDefenseColab.Assets
         public Bitmap GetCarsSpritesheet()
         {
             Image image = Image.FromFile(@"Assets/Spritesheets/cars_sheet.png");
+            return new Bitmap(image);
+        }
+
+        public Bitmap GetTowersSpritesheet()
+        {
+            Image image = Image.FromFile(@"Assets/Spritesheets/towers_grey_sheet.png");
             return new Bitmap(image);
         }
     }

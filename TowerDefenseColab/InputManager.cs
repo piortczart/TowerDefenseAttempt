@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using TowerDefenseColab.GameBusHere;
 
 namespace TowerDefenseColab
 {
@@ -9,17 +10,16 @@ namespace TowerDefenseColab
     {
         private readonly Dictionary<Keys, bool> _keyStates = new Dictionary<Keys, bool>();
 
-        public delegate void OnClickHandler(MouseEventArgs e);
         public delegate void OnMouseActionHandler(MouseEventArgs e);
 
         public delegate void OnKeyReleasedHandler(Keys key);
 
-        public event OnClickHandler OnClick;
         public event OnKeyReleasedHandler OnKeyReleased;
         public event OnMouseActionHandler OnMouseDragged;
         public event OnMouseActionHandler OnMouseReleased;
 
         private Func<Point> _getMousePointFunction;
+
 
         public void SetMousePointFunction(Func<Point> mousePointFunc)
         {
@@ -52,11 +52,6 @@ namespace TowerDefenseColab
             bool downState;
             _keyStates.TryGetValue(key, out downState);
             return downState;
-        }
-
-        public void MouseClicked(MouseEventArgs e)
-        {
-            OnClick?.Invoke(e);
         }
 
         internal void MouseRelease(MouseEventArgs e)

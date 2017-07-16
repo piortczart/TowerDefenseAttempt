@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using TowerDefenseColab.GameObjects;
+using TowerDefenseColab.GameObjects.Enemies;
+using TowerDefenseColab.GameObjects.Enemies.Old;
 
 namespace TowerDefenseColab.GamePhases.GameLevels
 {
