@@ -62,7 +62,6 @@ namespace TowerDefenseColab.GamePhases.GameLevels
                 Alignment = StringAlignment.Center
             };
 
-            inputManager.OnKeyReleased += OnKeyRelease;
             inputManager.OnMouseDragged += mouseDragControl.InputManagerOnMouseDrag;
             inputManager.OnMouseReleased += mouseDragControl.InputManagerOnMouseRelease;
             _enemySpawner = new EnemySpawner(_time, settings.SpawnFrequency);
@@ -97,46 +96,45 @@ namespace TowerDefenseColab.GamePhases.GameLevels
 
             bus.Subscribe<MouseClicked>(message =>
             {
+                if (IsVisible && message.EventArgs.Button == MouseButtons.Left)
+                {
+                    TowerBase towerBeingPlaced = _towers.SingleOrDefault(t => t.TowerStateEnum == TowerStateEnum.Setup);
+                    // There is a tower being placed and mouse was clicked => place it.
+                    // TODO: Make some map checks...
+                    towerBeingPlaced?.Place();
+                }
+            });
+
+            bus.Subscribe<KeyReleased>(message =>
+            {
                 if (IsVisible)
                 {
-                    TowerBase placing = _towers.SingleOrDefault(t => t.TowerStateEnum == TowerStateEnum.Setup);
-                    if (placing != null)
+                    if (_gameState == GameState.Won)
                     {
-                        placing.TowerStateEnum = TowerStateEnum.Active;
+                        _bus.Publish(new GameStateChange(GameState.Won));
+                        _gamePhaseManager.LevelEndedPlayerWon(this);
+                        CurrentEnemiesNew.Clear();
+                        return;
+                    }
+                    if (_gameState == GameState.Lost)
+                    {
+                        _bus.Publish(new GameStateChange(GameState.Lost));
+                        _gamePhaseManager.LevelEndedPlayerLost(this);
+                        CurrentEnemiesNew.Clear();
+                        return;
+                    }
+
+                    switch (message.Key)
+                    {
+                        case Keys.Space:
+                            TogglePause();
+                            break;
+                        case Keys.D1:
+                            StartPlacingTower();
+                            break;
                     }
                 }
             });
-        }
-
-        private void OnKeyRelease(Keys key)
-        {
-            if (IsVisible)
-            {
-                if (_gameState == GameState.Won)
-                {
-                    _bus.Publish(new GameStateChange(GameState.Won));
-                    _gamePhaseManager.LevelEndedPlayerWon(this);
-                    CurrentEnemiesNew.Clear();
-                    return;
-                }
-                if (_gameState == GameState.Lost)
-                {
-                    _bus.Publish(new GameStateChange(GameState.Lost));
-                    _gamePhaseManager.LevelEndedPlayerLost(this);
-                    CurrentEnemiesNew.Clear();
-                    return;
-                }
-
-                switch (key)
-                {
-                    case Keys.Space:
-                        TogglePause();
-                        break;
-                    case Keys.D1:
-                        StartPlacingTower();
-                        break;
-                }
-            }
         }
 
         private void StartPlacingTower()
@@ -235,11 +233,12 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             {
                 for (int x = _settings.Map.Layout.GetLength(1) - 1; x >= 0; x--)
                 {
-                    SpriteDetails sprite = _spriteSheets.GetSprite(_settings.Map.Layout[y, x]);
+                    SpriteEnum sprinteEnum = _settings.Map.Layout[y, x];
+                    SpriteDetails sprite = _spriteSheets.GetSprite(sprinteEnum);
                     if (sprite != null)
                     {
                         // This is the point where the sprite should be painted.
-                        Point pointOnScreen = GraphicsHelper.ConvertMapToReal(x, y, _graphicsTracker.DisplayOffset);
+                        Point pointOnScreen = GraphicsHelper.ConvertMapToReal(x, y, _graphicsTracker.MapOffset);
 
                         // Calculate the anchor location of the sprite.
                         var xx = sprite.Anchor.X - sprite.Location.X;
@@ -253,16 +252,13 @@ namespace TowerDefenseColab.GamePhases.GameLevels
                     }
                 }
             }
-
-            Point pp = GraphicsHelper.ConvertMapToReal(0, 0, _graphicsTracker.DisplayOffset);
-            graphics.Graphics.DrawArc(Pens.Black, pp.X, pp.Y, 4, 4, 0, 360);
         }
 
         public override void Update(TimeSpan timeDelta)
         {
             // Update the location of the tower being currently placed.
-            TowerBase placing = _towers.SingleOrDefault(t => t.TowerStateEnum == TowerStateEnum.Setup);
-            placing?.SetLocationCenter(_inputManager.GetMousePosition());
+            TowerBase towerBeingPlaced = _towers.SingleOrDefault(t => t.TowerStateEnum == TowerStateEnum.Setup);
+            towerBeingPlaced?.Update(timeDelta);
 
             if (_gameState == GameState.Paused || _gameState == GameState.Lost || _gameState == GameState.Won)
             {
@@ -311,8 +307,7 @@ namespace TowerDefenseColab.GamePhases.GameLevels
                     }
                 };
 
-                CurrentEnemiesNew.Add(new Enemy(spr, _graphicsTracker,
-                    new List<Point> { new Point(1, -1), new Point(1, 3), new Point(5, 3) }, _logger, _bus, _fontsAndColors));
+                CurrentEnemiesNew.Add(new Enemy(spr, _graphicsTracker, _settings.Waypoints, _logger, _bus, _fontsAndColors));
             }
         }
 

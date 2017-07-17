@@ -10,7 +10,13 @@ namespace TowerDefenseColab.GameObjects
         public SpriteDetails Sprite => _sprite.Sprites[_direction];
         private readonly SpriteWithDirections _sprite;
         private SpriteDirectionEnum _direction = SpriteDirectionEnum.BottomLeft;
-        public bool IsRelativeToMap { get; set; } = true;
+        /// <summary>
+        /// If this is true, then this entity should be rendered relatively to the map. Like a placed tower.
+        /// If it's false, it should be relative to the window (like a tower being placed).
+        /// </summary>
+        public bool IsRelativeToMap { private get; set; } = true;
+
+        public Size Size => Sprite.Location.Size;
 
         public EntitysSpriteDirected(SpriteWithDirections sprite)
         {
@@ -40,12 +46,15 @@ namespace TowerDefenseColab.GameObjects
 
         public PointF Render(BufferedGraphics graphics, GraphicsTracker graphicsTracker, PointF locationCenter)
         {
-            Size offset = IsRelativeToMap
-                ? new Size(graphicsTracker.DisplayOffset.X, graphicsTracker.DisplayOffset.Y)
-                : Size.Empty;
-            PointF point = PointF.Add(locationCenter, offset);
+            PointF point = GetWindowLocation(graphicsTracker, locationCenter);
             graphics.Graphics.DrawImage(Sprite.Bitmap, point);
             return point;
+        }
+
+        public PointF GetWindowLocation(GraphicsTracker graphicsTracker, PointF locationCenter)
+        {
+            Size offset = IsRelativeToMap ? graphicsTracker.MapOffset.ToSize() : Size.Empty;
+            return PointF.Add(locationCenter, offset);
         }
     }
 }

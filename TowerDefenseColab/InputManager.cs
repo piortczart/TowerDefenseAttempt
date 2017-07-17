@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using TowerDefenseColab.GameBusHere;
+using TowerDefenseColab.GameBusHere.Messages;
 
 namespace TowerDefenseColab
 {
     public class InputManager
     {
         private readonly Dictionary<Keys, bool> _keyStates = new Dictionary<Keys, bool>();
+        private readonly GameBus _bus;
 
         public delegate void OnMouseActionHandler(MouseEventArgs e);
 
-        public delegate void OnKeyReleasedHandler(Keys key);
-
-        public event OnKeyReleasedHandler OnKeyReleased;
         public event OnMouseActionHandler OnMouseDragged;
         public event OnMouseActionHandler OnMouseReleased;
 
         private Func<Point> _getMousePointFunction;
+
+        public InputManager(GameBus bus)
+        {
+            _bus = bus;
+        }
 
 
         public void SetMousePointFunction(Func<Point> mousePointFunc)
@@ -44,7 +48,7 @@ namespace TowerDefenseColab
         {
             _keyStates[key] = false;
 
-            OnKeyReleased?.Invoke(key);
+            _bus.Publish(new KeyReleased(key));
         }
 
         public bool GetKeyState(Keys key)

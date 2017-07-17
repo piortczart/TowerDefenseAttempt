@@ -14,20 +14,20 @@ namespace TowerDefenseColab.GameObjects.Towers
         public TowerStateEnum TowerStateEnum = TowerStateEnum.Setup;
         private readonly GameLevelActionLimiter _shootLimiter;
         public readonly TowerSettings Settings;
-        private readonly InputManager _inputManager;
         private readonly GameLevel _gameLevel;
         private PointF LocationCenter { get; set; }
         private readonly EntitysSpriteDirected _sprite;
         private readonly GraphicsTracker _graphicsTracker;
+        private readonly InputManager _inputManager;
 
-        public TowerBase(TowerSettings settings, GameLevelTime gameLevelTime, InputManager inputManager,
-            GameLevel gameLevel, GraphicsTracker graphicsTracker, SpriteSheets spriteSheets)
+        public TowerBase(TowerSettings settings, GameLevelTime gameLevelTime,
+            GameLevel gameLevel, GraphicsTracker graphicsTracker, SpriteSheets spriteSheets, InputManager inputManager)
         {
             _shootLimiter = new GameLevelActionLimiter(gameLevelTime, settings.ShootFrequency);
             Settings = settings;
-            _inputManager = inputManager;
             _gameLevel = gameLevel;
             _graphicsTracker = graphicsTracker;
+            _inputManager = inputManager;
 
             // TODO: Create sprite without direction.
             var spr = new SpriteWithDirections
@@ -46,6 +46,8 @@ namespace TowerDefenseColab.GameObjects.Towers
 
         public override void Init()
         {
+            // At the start it should stick to the cursor.
+            _sprite.IsRelativeToMap = false;
         }
 
         public override void Update(TimeSpan timeDelta)
@@ -53,18 +55,17 @@ namespace TowerDefenseColab.GameObjects.Towers
             switch (TowerStateEnum)
             {
                 case TowerStateEnum.Setup:
-                    LocationCenter = _inputManager.GetMousePosition();
-                    _sprite.IsRelativeToMap = false;
+                    SetLocationCenter(Point.Add(_inputManager.GetMousePosition(), _sprite.Size.Invert()));
                     break;
                 case TowerStateEnum.Active:
                     _sprite.IsRelativeToMap = true;
                     if (_shootLimiter.CanDoStuff())
                     {
                         Shoot();
-                    }
+                    };
                     break;
                 default:
-                    throw new IndexOutOfRangeException(nameof(TowerStateEnum));
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -72,14 +73,12 @@ namespace TowerDefenseColab.GameObjects.Towers
         {
             _sprite.Render(g, _graphicsTracker, LocationCenter);
 
-            //g.Graphics.DrawEllipse(Pens.Bisque, LocationCenter.X - Settings.RangePixels,
-            //    LocationCenter.Y - Settings.RangePixels,
-            //    Settings.RangePixels * 2, Settings.RangePixels * 2);
-
             Enemy enemy = GetClosestEnemy();
             if (enemy != null && IsInRange(enemy))
             {
-                g.Graphics.DrawLine(Pens.Crimson, LocationCenter.X, LocationCenter.Y, enemy.LocationCenter.X, enemy.LocationCenter.Y);
+                var realCenter = _sprite.GetWindowLocation(_graphicsTracker, LocationCenter);
+
+                g.Graphics.DrawLine(Pens.Crimson, realCenter, enemy.SpriteDirected.GetWindowLocation(_graphicsTracker, enemy.LocationCenter));
             }
         }
 
@@ -112,6 +111,13 @@ namespace TowerDefenseColab.GameObjects.Towers
         public void SetLocationCenter(Point point)
         {
             LocationCenter = point;
+        }
+
+        public void Place()
+        {
+            TowerStateEnum = TowerStateEnum.Active;
+            _sprite.IsRelativeToMap = true;
+            LocationCenter = _graphicsTracker.ConvertWindowCoordsToMapCoords(LocationCenter);
         }
     }
 }

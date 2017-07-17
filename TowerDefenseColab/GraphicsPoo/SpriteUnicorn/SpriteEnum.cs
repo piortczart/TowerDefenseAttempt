@@ -7,6 +7,7 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
         LandscapeRoadDown,
         LandscapeMinerals,
         LandscapeTurnTopLeftTopRight,
+        LandscapeTurnBottomLeftBottomRight,
         VehicleVanBottomRight,
         VehicleVanTopRight,
         VehicleVanBottomLeft,

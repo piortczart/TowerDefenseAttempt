@@ -4,11 +4,11 @@ namespace TowerDefenseColab.GameBusHere.Messages
 {
     public class MouseClicked : IGameMessage
     {
-        private MouseEventArgs _eventArgs;
+        public MouseEventArgs EventArgs { get; }
 
         public MouseClicked(MouseEventArgs eventArgs)
         {
-            _eventArgs = eventArgs;
+            EventArgs = eventArgs;
         }
     }
 }

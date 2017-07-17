@@ -9,6 +9,7 @@ using TowerDefenseColab.GameBusHere.Messages;
 using TowerDefenseColab.GameObjects.Enemies;
 using TowerDefenseColab.GamePhases;
 using TowerDefenseColab.GamePhases.GameLevels;
+using TowerDefenseColab.GamePhases.GameLevels.LevelLayouts;
 using TowerDefenseColab.GraphicsPoo;
 using TowerDefenseColab.GraphicsPoo.SpriteUnicorn;
 using TowerDefenseColab.Logging;
@@ -27,9 +28,12 @@ namespace TowerDefenseColab
         private BufferedGraphics _backBuffer;
         private bool _isMouseDown;
         private readonly FontsAndColors _fontsAndColors;
+        private readonly LogsOverlay _logsOverlay;
+        private readonly LevelLayoutLoader _layoutLoader;
 
         public GameWindow(GamePhaseManager phaseManager, StartScreen startScreen, GameLevelFactory gameLevelFactory,
-            InputManager inputManager, GameBus bus, ApplicationLogger applicationLogger, FontsAndColors fontsAndColors)
+            InputManager inputManager, GameBus bus, ApplicationLogger applicationLogger, FontsAndColors fontsAndColors,
+            LogsOverlay logsOverlay, LevelLayoutLoader layoutLoader)
         {
             _phaseManager = phaseManager;
             _startScreen = startScreen;
@@ -37,26 +41,15 @@ namespace TowerDefenseColab
             _bus = bus;
             _applicationLogger = applicationLogger;
             _fontsAndColors = fontsAndColors;
+            _logsOverlay = logsOverlay;
+            _layoutLoader = layoutLoader;
             _inputManager = inputManager;
             _inputManager.SetMousePointFunction(() => PointToClient(Cursor.Position));
-            inputManager.OnKeyReleased += OnKeyRelease;
 
             _bus.Subscribe<MessageWindowResized>(a => { InitBackBuffer(a.DisplayRectangle); });
 
             InitializeComponent();
             Show();
-        }
-
-        private bool _showLogs;
-
-        private void OnKeyRelease(Keys key)
-        {
-            switch (key)
-            {
-                case Keys.L:
-                    _showLogs = !_showLogs;
-                    break;
-            }
         }
 
         /// <summary>
@@ -84,37 +77,8 @@ namespace TowerDefenseColab
                     SpawnFrequency = TimeSpan.FromSeconds(1),
                     LevelNumber = 1,
                     StartingResources = 10,
-                    Waypoints = new List<Point> { new Point(1, 0), new Point(1, 3) },
-                    Map = new LevelMap
-                    {
-                        Layout = new[,]
-                        {
-                            {
-                                SpriteEnum.LandscapeMinerals, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown, SpriteEnum.LandscapeGrass,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeTurnTopLeftTopRight,
-                                SpriteEnum.LandscapeRoadUp, SpriteEnum.LandscapeRoadUp, SpriteEnum.LandscapeRoadUp
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                        }
-                    }
+                    Waypoints = new List<Point> { new Point(1, -1), new Point(1, 3), new Point(5, 3), new Point(5, 5) },
+                    Map = new LevelMap { Layout = _layoutLoader.LoadLevelLayout("01") }
                 }));
             _phaseManager.Add(GamePhaseEnum.Level002,
                 _gameLevelFactory.CreateLevel(new GameLevelSettings
@@ -123,37 +87,8 @@ namespace TowerDefenseColab
                     SpawnFrequency = TimeSpan.FromSeconds(1.5),
                     LevelNumber = 2,
                     StartingResources = 20,
-                    Waypoints = new List<Point> { new Point(2, 0), new Point(2, 5) },
-                    Map = new LevelMap
-                    {
-                        Layout = new[,]
-                        {
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                            {
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeRoadDown,
-                                SpriteEnum.LandscapeGrass, SpriteEnum.LandscapeGrass
-                            },
-                        }
-                    }
+                    Waypoints = new List<Point> { new Point(2, 0), new Point(2, 5), new Point(5, 5), new Point(5, 9), new Point(6, 9) },
+                    Map = new LevelMap { Layout = _layoutLoader.LoadLevelLayout("02") }
                 }));
 
             _phaseManager.ChangeActiveGamePhase(GamePhaseEnum.StartScreen);
@@ -176,11 +111,8 @@ namespace TowerDefenseColab
                 // render game phase
                 _phaseManager.Render(_backBuffer);
 
-                // render logs
-                if (_showLogs)
-                {
-                    RenderLogs(_backBuffer);
-                }
+                // render logs (if needed)
+                _logsOverlay.Render(_backBuffer);
 
                 _backBuffer.Render();
                 _backBuffer.Render(CreateGraphics());
@@ -193,15 +125,6 @@ namespace TowerDefenseColab
             _backBuffer.Dispose();
         }
 
-        private void RenderLogs(BufferedGraphics backBuffer)
-        {
-            int logNumber = 0;
-            foreach (string log in _applicationLogger.Logs)
-            {
-                backBuffer.Graphics.DrawString(log, _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlackBrush, 20,
-                    50 + (logNumber++ * 20));
-            }
-        }
 
         private void GameWindow_FormClosed(object sender, FormClosedEventArgs e)
         {

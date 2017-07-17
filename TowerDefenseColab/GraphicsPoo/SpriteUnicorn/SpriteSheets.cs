@@ -62,6 +62,15 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
                         Anchor = new Point(994, 395)
                     }
                 },
+                {
+                    SpriteEnum.LandscapeTurnBottomLeftBottomRight,
+                    new SpriteDetails
+                    {
+                        Spritesheet = sheetLandscape,
+                        Location = new Rectangle(1720, 100, 133, 98),
+                        Anchor = new Point(1786, 165)
+                    }
+                },
                 // CARS
                 {
                     SpriteEnum.VehicleVanBottomRight,

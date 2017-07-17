@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="StructureMap, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StructureMap.4.5.1\lib\net45\StructureMap.dll</HintPath>
     </Reference>
@@ -61,6 +64,7 @@
     <Compile Include="GameBusHere\IGameMessage.cs" />
     <Compile Include="GameBusHere\Messages\EnemyDespawned.cs" />
     <Compile Include="GameBusHere\Messages\GameStateChange.cs" />
+    <Compile Include="GameBusHere\Messages\KeyReleased.cs" />
     <Compile Include="GameBusHere\Messages\MessageMouseDragged.cs" />
     <Compile Include="GameBusHere\Messages\MessageWindowResized.cs" />
     <Compile Include="GameBusHere\Messages\MouseClicked.cs" />
@@ -83,6 +87,7 @@
     <Compile Include="GameObjects\Towers\TowerStateEnum.cs" />
     <Compile Include="GameObjects\Weapon.cs" />
     <Compile Include="GamePhases\GameLevels\EnemySpawner.cs" />
+    <Compile Include="GamePhases\GameLevels\LevelLayouts\LevelLayoutLoader.cs" />
     <Compile Include="GraphicsPoo\FontsAndColors.cs" />
     <Compile Include="GamePhases\GameLevels\GameLevel.cs" />
     <Compile Include="GameLoopMethods.cs" />
@@ -103,6 +108,7 @@
     <Compile Include="GameWindow.Designer.cs">
       <DependentUpon>GameWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="GraphicsPoo\GraphicsExtensions.cs" />
     <Compile Include="GraphicsPoo\GraphicsHelper.cs" />
     <Compile Include="GraphicsPoo\GraphicsTracker.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteEnum.cs" />
@@ -110,6 +116,7 @@
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteSheets.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteWithDirections.cs" />
     <Compile Include="InputManager.cs" />
+    <Compile Include="LogsOverlay.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GameWindow.resx">
@@ -125,6 +132,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="GamePhases\GameLevels\LevelLayouts\01.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GamePhases\GameLevels\LevelLayouts\02.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -174,6 +187,7 @@
       <Name>TowerDefenseColab.Logging</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

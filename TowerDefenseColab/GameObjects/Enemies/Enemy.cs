@@ -25,7 +25,7 @@ namespace TowerDefenseColab.GameObjects.Enemies
         private readonly GameBus _bus;
         private readonly FontsAndColors _fontsAndColors;
         private readonly EntitysHealth _health;
-        private readonly EntitysSpriteDirected _spriteDirected;
+        public EntitysSpriteDirected SpriteDirected { get; }
 
         public bool IsAlive => !_health.IsDead;
         public bool IsVisible { get; private set; } = true;
@@ -39,7 +39,7 @@ namespace TowerDefenseColab.GameObjects.Enemies
             GameBus bus,
             FontsAndColors fontsAndColors)
         {
-            _spriteDirected = new EntitysSpriteDirected(sprite);
+            SpriteDirected = new EntitysSpriteDirected(sprite);
             _graphicsTracker = graphicsTracker;
             _waypoints = waypoints;
             _logger = logger;
@@ -99,7 +99,7 @@ namespace TowerDefenseColab.GameObjects.Enemies
                 // From current position to the current waypoint.
                 Vector2 toWaypoint = new Vector2(currentWaypoint.X - _currentX, currentWaypoint.Y - _currentY);
 
-                _spriteDirected.ChangeDirection(toWaypoint);
+                SpriteDirected.ChangeDirection(toWaypoint);
 
                 // Distance traveled.
                 float traveled = (float)timeDelta.TotalSeconds * speed;
@@ -117,8 +117,8 @@ namespace TowerDefenseColab.GameObjects.Enemies
                 }
             }
 
-            LocationCenter = new PointF(_currentX - _spriteDirected.Sprite.Location.Width / 2,
-                _currentY - _spriteDirected.Sprite.Location.Height / 2);
+            LocationCenter = new PointF(_currentX - SpriteDirected.Sprite.Location.Width / 2,
+                _currentY - SpriteDirected.Sprite.Location.Height / 2);
         }
 
         public override void Render(BufferedGraphics g)
@@ -126,7 +126,7 @@ namespace TowerDefenseColab.GameObjects.Enemies
             if (IsVisible)
             {
                 // Render the sprite. Returns the render coordiates.
-                PointF renderCoords = _spriteDirected.Render(g, _graphicsTracker, LocationCenter);
+                PointF renderCoords = SpriteDirected.Render(g, _graphicsTracker, LocationCenter);
 
                 if (IsAlive)
                 {
