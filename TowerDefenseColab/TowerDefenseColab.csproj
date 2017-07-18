@@ -88,6 +88,7 @@
     <Compile Include="GameObjects\Weapon.cs" />
     <Compile Include="GamePhases\GameLevels\EnemySpawner.cs" />
     <Compile Include="GamePhases\GameLevels\LevelLayouts\LevelLayoutLoader.cs" />
+    <Compile Include="GamePhases\GameLevels\MapGeneration\MapGenerator.cs" />
     <Compile Include="GraphicsPoo\FontsAndColors.cs" />
     <Compile Include="GamePhases\GameLevels\GameLevel.cs" />
     <Compile Include="GameLoopMethods.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteWithDirections.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="LogsOverlay.cs" />
+    <Compile Include="PathCreation\PathCreator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GameWindow.resx">

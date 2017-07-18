@@ -10,8 +10,8 @@ using TowerDefenseColab.GameObjects.Enemies;
 using TowerDefenseColab.GamePhases;
 using TowerDefenseColab.GamePhases.GameLevels;
 using TowerDefenseColab.GamePhases.GameLevels.LevelLayouts;
+using TowerDefenseColab.GamePhases.GameLevels.MapGeneration;
 using TowerDefenseColab.GraphicsPoo;
-using TowerDefenseColab.GraphicsPoo.SpriteUnicorn;
 using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab
@@ -30,10 +30,11 @@ namespace TowerDefenseColab
         private readonly FontsAndColors _fontsAndColors;
         private readonly LogsOverlay _logsOverlay;
         private readonly LevelLayoutLoader _layoutLoader;
+        private readonly MapGenerator _mapGenerator;
 
         public GameWindow(GamePhaseManager phaseManager, StartScreen startScreen, GameLevelFactory gameLevelFactory,
             InputManager inputManager, GameBus bus, ApplicationLogger applicationLogger, FontsAndColors fontsAndColors,
-            LogsOverlay logsOverlay, LevelLayoutLoader layoutLoader)
+            LogsOverlay logsOverlay, LevelLayoutLoader layoutLoader, MapGenerator mapGenerator)
         {
             _phaseManager = phaseManager;
             _startScreen = startScreen;
@@ -43,6 +44,7 @@ namespace TowerDefenseColab
             _fontsAndColors = fontsAndColors;
             _logsOverlay = logsOverlay;
             _layoutLoader = layoutLoader;
+            _mapGenerator = mapGenerator;
             _inputManager = inputManager;
             _inputManager.SetMousePointFunction(() => PointToClient(Cursor.Position));
 
@@ -70,6 +72,7 @@ namespace TowerDefenseColab
             // TODO: should it be even done here or by the PhageManager class itself?
             _phaseManager.Add(GamePhaseEnum.StartScreen, _startScreen);
 
+            GeneratedMap generatedMap = _mapGenerator.GenerateMap();
             _phaseManager.Add(GamePhaseEnum.Level001,
                 _gameLevelFactory.CreateLevel(new GameLevelSettings
                 {
@@ -77,8 +80,8 @@ namespace TowerDefenseColab
                     SpawnFrequency = TimeSpan.FromSeconds(1),
                     LevelNumber = 1,
                     StartingResources = 10,
-                    Waypoints = new List<Point> { new Point(1, -1), new Point(1, 3), new Point(5, 3), new Point(5, 5) },
-                    Map = new LevelMap { Layout = _layoutLoader.LoadLevelLayout("01") }
+                    Waypoints = generatedMap.Path,
+                    Map = new LevelMap { Layout = generatedMap.Map }
                 }));
             _phaseManager.Add(GamePhaseEnum.Level002,
                 _gameLevelFactory.CreateLevel(new GameLevelSettings
