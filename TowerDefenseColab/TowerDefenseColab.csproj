@@ -63,13 +63,15 @@
     <Compile Include="GameBusHere\GameBus.cs" />
     <Compile Include="GameBusHere\IGameMessage.cs" />
     <Compile Include="GameBusHere\Messages\EnemyDespawned.cs" />
+    <Compile Include="GameBusHere\Messages\StartGame.cs" />
     <Compile Include="GameBusHere\Messages\GameStateChange.cs" />
     <Compile Include="GameBusHere\Messages\KeyReleased.cs" />
     <Compile Include="GameBusHere\Messages\MessageMouseDragged.cs" />
     <Compile Include="GameBusHere\Messages\MessageWindowResized.cs" />
     <Compile Include="GameBusHere\Messages\MouseClicked.cs" />
     <Compile Include="GameMechanisms\Animation.cs" />
-    <Compile Include="GameMechanisms\Resources.cs" />
+    <Compile Include="GamePhases\Gui\Overlays\GameMapOverlay.cs" />
+    <Compile Include="GamePhases\Gui\Resources.cs" />
     <Compile Include="GameObjects\AnimationInfo.cs" />
     <Compile Include="GameBusHere\Messages\EnemyReachedGoal.cs" />
     <Compile Include="GameObjects\EntitysSpriteDirected.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="GamePhases\GameLevels\EnemySpawner.cs" />
     <Compile Include="GamePhases\GameLevels\LevelLayouts\LevelLayoutLoader.cs" />
     <Compile Include="GamePhases\GameLevels\MapGeneration\MapGenerator.cs" />
+    <Compile Include="GamePhases\Gui\Overlays\ResourcesOverlay.cs" />
     <Compile Include="GraphicsPoo\FontsAndColors.cs" />
     <Compile Include="GamePhases\GameLevels\GameLevel.cs" />
     <Compile Include="GameLoopMethods.cs" />
@@ -102,7 +105,6 @@
     <Compile Include="GamePhases\GamePhaseEnum.cs" />
     <Compile Include="GamePhases\GamePhaseManager.cs" />
     <Compile Include="GamePhases\GameState.cs" />
-    <Compile Include="GamePhases\StartScreen.cs" />
     <Compile Include="GameWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -159,9 +161,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\circleOfDeath.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\menu.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\sprite1.png">

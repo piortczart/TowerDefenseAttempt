@@ -8,9 +8,9 @@ using TowerDefenseColab.GameBusHere.Messages;
 using TowerDefenseColab.GameMechanisms;
 using TowerDefenseColab.GameObjects.Enemies;
 using TowerDefenseColab.GameObjects.Towers;
+using TowerDefenseColab.GamePhases.Gui.Overlays;
 using TowerDefenseColab.GraphicsPoo;
 using TowerDefenseColab.GraphicsPoo.SpriteUnicorn;
-using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab.GamePhases.GameLevels
 {
@@ -19,8 +19,6 @@ namespace TowerDefenseColab.GamePhases.GameLevels
     {
         public readonly List<Enemy> CurrentEnemiesNew = new List<Enemy>();
         private readonly GameLevelSettings _settings;
-        private readonly GamePhaseManager _gamePhaseManager;
-        private readonly InputManager _inputManager;
         private readonly TowerFactory _towerFactory;
         private readonly GameLevelTime _time = new GameLevelTime();
         private Queue<EnemyTypeEnum> _monstersLeftToSpawn;
@@ -30,8 +28,8 @@ namespace TowerDefenseColab.GamePhases.GameLevels
         private readonly GraphicsTracker _graphicsTracker;
         private readonly FontsAndColors _fontsAndColors;
         private readonly SpriteSheets _spriteSheets;
-        private readonly ApplicationLogger _logger;
         private readonly GameBus _bus;
+        private readonly GameMapOverlay _gameMapOverlay;
         private readonly StringFormat _stringFormatCenter;
         private readonly EnemySpawner _enemySpawner;
 
@@ -44,23 +42,22 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             MouseDragControl mouseDragControl,
             FontsAndColors fontsAndColors,
             SpriteSheets spriteSheets,
-            ApplicationLogger logger,
-            GameBus bus)
+            GameBus bus,
+            GameMapOverlay gameMapOverlay)
         {
             _settings = settings;
-            _gamePhaseManager = gamePhaseManager;
-            _inputManager = inputManager;
             _towerFactory = towerFactory;
             _graphicsTracker = graphicsTracker;
             _fontsAndColors = fontsAndColors;
             _spriteSheets = spriteSheets;
-            _logger = logger;
             _bus = bus;
+            _gameMapOverlay = gameMapOverlay;
             _stringFormatCenter = new StringFormat
             {
                 LineAlignment = StringAlignment.Center,
                 Alignment = StringAlignment.Center
             };
+            _gameMapOverlay.SetMap(settings.Map);
 
             inputManager.OnMouseDragged += mouseDragControl.InputManagerOnMouseDrag;
             inputManager.OnMouseReleased += mouseDragControl.InputManagerOnMouseRelease;
@@ -112,14 +109,12 @@ namespace TowerDefenseColab.GamePhases.GameLevels
                     if (_gameState == GameState.Won)
                     {
                         _bus.Publish(new GameStateChange(GameState.Won));
-                        _gamePhaseManager.LevelEndedPlayerWon(this);
                         CurrentEnemiesNew.Clear();
                         return;
                     }
                     if (_gameState == GameState.Lost)
                     {
                         _bus.Publish(new GameStateChange(GameState.Lost));
-                        _gamePhaseManager.LevelEndedPlayerLost(this);
                         CurrentEnemiesNew.Clear();
                         return;
                     }
@@ -159,15 +154,16 @@ namespace TowerDefenseColab.GamePhases.GameLevels
 
         private void TogglePause()
         {
-            if (_gameState == GameState.Rolling)
+            switch (_gameState)
             {
-                _gameState = GameState.Paused;
-                _time.Stop();
-            }
-            else if (_gameState == GameState.Paused)
-            {
-                _gameState = GameState.Rolling;
-                _time.Start();
+                case GameState.Rolling:
+                    _gameState = GameState.Paused;
+                    _time.Stop();
+                    break;
+                case GameState.Paused:
+                    _gameState = GameState.Rolling;
+                    _time.Start();
+                    break;
             }
         }
 
@@ -186,7 +182,7 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             g.Graphics.FillRectangle(_fontsAndColors.BackgroundBrush, _graphicsTracker.DisplayRectangle);
 
             // Drawing the map using tiles.
-            RenderMap(g);
+            _gameMapOverlay.Render(g);
 
             foreach (Enemy enemyNew in CurrentEnemiesNew)
             {
@@ -225,33 +221,6 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             g.Graphics.DrawString($"${_resources.Amount}",
                 _fontsAndColors.MonospaceFontSmaller, _fontsAndColors.BlueBrush,
                 _graphicsTracker.DisplayRectangle.Width - 100, 20);
-        }
-
-        private void RenderMap(BufferedGraphics graphics)
-        {
-            for (int y = 0; y < _settings.Map.Layout.GetLength(0); y++)
-            {
-                for (int x = _settings.Map.Layout.GetLength(1) - 1; x >= 0; x--)
-                {
-                    SpriteEnum sprinteEnum = _settings.Map.Layout[y, x];
-                    SpriteDetails sprite = _spriteSheets.GetSprite(sprinteEnum);
-                    if (sprite != null)
-                    {
-                        // This is the point where the sprite should be painted.
-                        Point pointOnScreen = GraphicsHelper.ConvertMapToReal(x, y, _graphicsTracker.MapOffset);
-
-                        // Calculate the anchor location of the sprite.
-                        var xx = sprite.Anchor.X - sprite.Location.X;
-                        var yy = sprite.Anchor.Y - sprite.Location.Y;
-
-                        Point realPoint = new Point(pointOnScreen.X - xx, pointOnScreen.Y - yy);
-
-                        graphics.Graphics.DrawImage(sprite.Bitmap, realPoint);
-                        graphics.Graphics.DrawString(y + "," + x, _fontsAndColors.MonospaceFontSmaller,
-                            _fontsAndColors.BlackBrush, pointOnScreen);
-                    }
-                }
-            }
         }
 
         public override void Update(TimeSpan timeDelta)
@@ -307,7 +276,7 @@ namespace TowerDefenseColab.GamePhases.GameLevels
                     }
                 };
 
-                CurrentEnemiesNew.Add(new Enemy(spr, _graphicsTracker, _settings.Waypoints, _logger, _bus, _fontsAndColors));
+                CurrentEnemiesNew.Add(new Enemy(spr, _graphicsTracker, _settings.Waypoints, _bus, _fontsAndColors));
             }
         }
 

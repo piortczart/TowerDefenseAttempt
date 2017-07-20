@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using TowerDefenseColab.GameBusHere;
 using TowerDefenseColab.GameBusHere.Messages;
-using TowerDefenseColab.GameObjects.Enemies;
 using TowerDefenseColab.GamePhases;
-using TowerDefenseColab.GamePhases.GameLevels;
-using TowerDefenseColab.GamePhases.GameLevels.LevelLayouts;
-using TowerDefenseColab.GamePhases.GameLevels.MapGeneration;
-using TowerDefenseColab.GraphicsPoo;
 using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab
@@ -19,32 +12,21 @@ namespace TowerDefenseColab
     public partial class GameWindow : Form
     {
         private readonly GamePhaseManager _phaseManager;
-        private readonly StartScreen _startScreen;
         private bool _isAlive = true;
-        private readonly GameLevelFactory _gameLevelFactory;
         private readonly InputManager _inputManager;
         private readonly GameBus _bus;
         private readonly ApplicationLogger _applicationLogger;
         private BufferedGraphics _backBuffer;
         private bool _isMouseDown;
-        private readonly FontsAndColors _fontsAndColors;
         private readonly LogsOverlay _logsOverlay;
-        private readonly LevelLayoutLoader _layoutLoader;
-        private readonly MapGenerator _mapGenerator;
 
-        public GameWindow(GamePhaseManager phaseManager, StartScreen startScreen, GameLevelFactory gameLevelFactory,
-            InputManager inputManager, GameBus bus, ApplicationLogger applicationLogger, FontsAndColors fontsAndColors,
-            LogsOverlay logsOverlay, LevelLayoutLoader layoutLoader, MapGenerator mapGenerator)
+        public GameWindow(GamePhaseManager phaseManager, InputManager inputManager, GameBus bus,
+            ApplicationLogger applicationLogger, LogsOverlay logsOverlay)
         {
             _phaseManager = phaseManager;
-            _startScreen = startScreen;
-            _gameLevelFactory = gameLevelFactory;
             _bus = bus;
             _applicationLogger = applicationLogger;
-            _fontsAndColors = fontsAndColors;
             _logsOverlay = logsOverlay;
-            _layoutLoader = layoutLoader;
-            _mapGenerator = mapGenerator;
             _inputManager = inputManager;
             _inputManager.SetMousePointFunction(() => PointToClient(Cursor.Position));
 
@@ -67,35 +49,7 @@ namespace TowerDefenseColab
         private void InitGame()
         {
             _applicationLogger.LogInfo("Initializing...");
-
-            // Create the pahses.
-            // TODO: should it be even done here or by the PhageManager class itself?
-            _phaseManager.Add(GamePhaseEnum.StartScreen, _startScreen);
-
-            GeneratedMap generatedMap = _mapGenerator.GenerateMap();
-            _phaseManager.Add(GamePhaseEnum.Level001,
-                _gameLevelFactory.CreateLevel(new GameLevelSettings
-                {
-                    EnemyTypesToSpawn = new[] { EnemyTypeEnum.BlueVan },
-                    SpawnFrequency = TimeSpan.FromSeconds(1),
-                    LevelNumber = 1,
-                    StartingResources = 10,
-                    Waypoints = generatedMap.Path,
-                    Map = new LevelMap { Layout = generatedMap.Map }
-                }));
-            _phaseManager.Add(GamePhaseEnum.Level002,
-                _gameLevelFactory.CreateLevel(new GameLevelSettings
-                {
-                    EnemyTypesToSpawn = Enumerable.Range(0, 20).Select(i => EnemyTypeEnum.BlueVan),
-                    SpawnFrequency = TimeSpan.FromSeconds(1.5),
-                    LevelNumber = 2,
-                    StartingResources = 20,
-                    Waypoints = new List<Point> { new Point(2, 0), new Point(2, 5), new Point(5, 5), new Point(5, 9), new Point(6, 9) },
-                    Map = new LevelMap { Layout = _layoutLoader.LoadLevelLayout("02") }
-                }));
-
-            _phaseManager.ChangeActiveGamePhase(GamePhaseEnum.StartScreen);
-
+            _phaseManager.Init();
             _bus.Publish(new MessageWindowResized(DisplayRectangle));
         }
 

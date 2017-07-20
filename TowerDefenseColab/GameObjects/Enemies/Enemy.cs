@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.Numerics;
 using TowerDefenseColab.GameBusHere;
 using TowerDefenseColab.GameBusHere.Messages;
 using TowerDefenseColab.GameObjects.Towers;
 using TowerDefenseColab.GraphicsPoo;
 using TowerDefenseColab.GraphicsPoo.SpriteUnicorn;
-using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab.GameObjects.Enemies
 {
@@ -16,12 +14,11 @@ namespace TowerDefenseColab.GameObjects.Enemies
     {
         private readonly GraphicsTracker _graphicsTracker;
         private readonly List<Point> _waypoints;
-        private readonly ApplicationLogger _logger;
         private int _currentWaypoint;
         private float _currentX, _currentY;
         private float speed = 50;
         public PointF LocationCenter { get; private set; }
-        public bool FoundPointG { get; private set; }
+        private bool FoundPointG { get; set; }
         private readonly GameBus _bus;
         private readonly FontsAndColors _fontsAndColors;
         private readonly EntitysHealth _health;
@@ -29,20 +26,18 @@ namespace TowerDefenseColab.GameObjects.Enemies
 
         public bool IsAlive => !_health.IsDead;
         public bool IsVisible { get; private set; } = true;
-        public TimeSpan AgonyPeriod { get; set; } = TimeSpan.FromSeconds(2);
+        private TimeSpan AgonyPeriod { get; set; } = TimeSpan.FromSeconds(2);
 
         public Enemy(
             SpriteWithDirections sprite,
             GraphicsTracker graphicsTracker,
             List<Point> waypoints,
-            ApplicationLogger logger,
             GameBus bus,
             FontsAndColors fontsAndColors)
         {
             SpriteDirected = new EntitysSpriteDirected(sprite);
             _graphicsTracker = graphicsTracker;
             _waypoints = waypoints;
-            _logger = logger;
             _bus = bus;
             _fontsAndColors = fontsAndColors;
             _health = new EntitysHealth { Health = 2 };

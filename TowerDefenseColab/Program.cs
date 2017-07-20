@@ -2,8 +2,6 @@
 using System.Windows.Forms;
 using StructureMap;
 using TowerDefenseColab.GameBusHere;
-using TowerDefenseColab.GameObjects;
-using TowerDefenseColab.GameObjects.Enemies.Old;
 using TowerDefenseColab.GamePhases;
 using TowerDefenseColab.GamePhases.GameLevels;
 using TowerDefenseColab.GraphicsPoo;
@@ -36,15 +34,14 @@ namespace TowerDefenseColab
                 _.ForSingletonOf<GamePhaseManager>();
                 _.ForSingletonOf<InputManager>();
                 _.ForSingletonOf<GameLevelFactory>();
-                _.ForSingletonOf<EnemyFactory>();
                 _.ForSingletonOf<GraphicsTracker>();
                 _.ForSingletonOf<GameBus>();
                 _.ForSingletonOf<MouseDragControl>();
                 _
-                .ForSingletonOf<ApplicationLogger>()
-                .Use<ApplicationLogger>()
-                .Ctor<Action<string>>("action")
-                .Is(x => { });
+                    .ForSingletonOf<ApplicationLogger>()
+                    .Use<ApplicationLogger>()
+                    .Ctor<Action<string>>("action")
+                    .Is(x => { });
             });
         }
     }
