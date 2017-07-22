@@ -22,6 +22,7 @@ namespace TowerDefenseColab.GameObjects.Enemies
         private readonly GameBus _bus;
         private readonly FontsAndColors _fontsAndColors;
         private readonly EntitysHealth _health;
+        private readonly SpriteSheets _spriteSheets;
         public EntitysSpriteDirected SpriteDirected { get; }
 
         public bool IsAlive => !_health.IsDead;
@@ -29,22 +30,39 @@ namespace TowerDefenseColab.GameObjects.Enemies
         private TimeSpan AgonyPeriod { get; set; } = TimeSpan.FromSeconds(2);
 
         public Enemy(
-            SpriteWithDirections sprite,
+            EnemySettings settings,
             GraphicsTracker graphicsTracker,
-            List<Point> waypoints,
             GameBus bus,
-            FontsAndColors fontsAndColors)
+            FontsAndColors fontsAndColors,
+            SpriteSheets spriteSheets)
         {
-            SpriteDirected = new EntitysSpriteDirected(sprite);
             _graphicsTracker = graphicsTracker;
-            _waypoints = waypoints;
             _bus = bus;
             _fontsAndColors = fontsAndColors;
-            _health = new EntitysHealth { Health = 2 };
+            _spriteSheets = spriteSheets;
+            _health = new EntitysHealth { Health = settings.Health };
+            _waypoints = settings.Waypoints;
+
+            SpriteDirected = CreateSprite(settings.EnemyType);
         }
 
         public override void Init()
         {
+        }
+
+        private EntitysSpriteDirected CreateSprite(EnemyTypeEnum settingsEnemyType)
+        {
+            var spriteWithDirections = new SpriteWithDirections
+            {
+                Sprites = new Dictionary<SpriteDirectionEnum, SpriteDetails>
+                    {
+                        {SpriteDirectionEnum.BottomLeft, _spriteSheets.GetSprite(SpriteEnum.VehicleVanBottomLeft)},
+                        {SpriteDirectionEnum.BottomRight, _spriteSheets.GetSprite(SpriteEnum.VehicleVanBottomRight)},
+                        {SpriteDirectionEnum.TopLeft, _spriteSheets.GetSprite(SpriteEnum.VehicleVanTopLeft)},
+                        {SpriteDirectionEnum.TopRight, _spriteSheets.GetSprite(SpriteEnum.VehicleVanTopRight)}
+                    }
+            };
+            return new EntitysSpriteDirected(spriteWithDirections);
         }
 
         private Point ActualLocationByMap(int mapX, int mapY)

@@ -58,7 +58,8 @@ namespace TowerDefenseColab.GamePhases
                     LevelNumber = 1,
                     StartingResources = 10,
                     Waypoints = generatedMap.Path,
-                    Map = new LevelMap { Layout = generatedMap.Map }
+                    Map = new LevelMap { Layout = generatedMap.Map },
+                    PhaseEnum = GamePhaseEnum.Level001
                 }));
 
             Add(GamePhaseEnum.Level002,
@@ -77,12 +78,11 @@ namespace TowerDefenseColab.GamePhases
                             new Point(5, 9),
                             new Point(6, 9)
                         },
-                    Map = new LevelMap { Layout = _layoutLoader.LoadLevelLayout("02") }
+                    Map = new LevelMap { Layout = _layoutLoader.LoadLevelLayout("02") },
+                    PhaseEnum = GamePhaseEnum.Level002
                 }));
 
             ChangeActiveGamePhase(_gamePhases.First().Key);
-
-            _activeGamePhase.Init();
         }
 
         public override void Update(TimeSpan timeDelta)

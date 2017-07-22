@@ -20,7 +20,10 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             bool isFirstSpawn = _lastSpawn == TimeSpan.MinValue;
             // Spawn enemy if no enemy was spawned yet or if the time since last spawn is long enough.
             bool shouldSpawnEnemy = _lastSpawn + _spawnFrequency <= nao || isFirstSpawn;
-            _lastSpawn = nao;
+            if (shouldSpawnEnemy)
+            {
+                _lastSpawn = nao;
+            }
             return shouldSpawnEnemy;
         }
     }

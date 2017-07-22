@@ -14,5 +14,6 @@ namespace TowerDefenseColab.GamePhases.GameLevels
         //public Point SpawnPoint { get { return Waypoints[0]; } }
         public decimal StartingResources { get; set; }
         public LevelMap Map { get; set; }
+        public GamePhaseEnum PhaseEnum { get; set; }
     }
 }

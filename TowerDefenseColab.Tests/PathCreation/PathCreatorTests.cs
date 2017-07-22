@@ -9,11 +9,11 @@ namespace TowerDefenseColab.Tests.PathCreation
     [TestClass]
     public class PathCreatorTests
     {
+
         [TestMethod]
         public void CreatePathTest()
         {
             var creator = new PathCreator();
-
             var map = new[,]
             {
                 { true, true, true },

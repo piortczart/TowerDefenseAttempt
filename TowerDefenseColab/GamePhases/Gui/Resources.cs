@@ -1,6 +1,6 @@
 ﻿using TowerDefenseColab.GameObjects.Enemies.Old;
 
-namespace TowerDefenseColab.GameMechanisms
+namespace TowerDefenseColab.GamePhases.Gui
 {
     public class Resources
     {
@@ -20,6 +20,11 @@ namespace TowerDefenseColab.GameMechanisms
         {
             // TODO: add proper amount depending on the enemy type/level/other modifiers?
             Add(enemy.ResourcesForKilling);
+        }
+
+        public bool DoesAfford(decimal amount)
+        {
+            return amount <= Amount;
         }
 
         /// <summary>

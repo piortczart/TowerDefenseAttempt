@@ -70,6 +70,8 @@
     <Compile Include="GameBusHere\Messages\MessageWindowResized.cs" />
     <Compile Include="GameBusHere\Messages\MouseClicked.cs" />
     <Compile Include="GameMechanisms\Animation.cs" />
+    <Compile Include="GameObjects\Enemies\EnemyFactory.cs" />
+    <Compile Include="GameObjects\Enemies\EnemySettings.cs" />
     <Compile Include="GamePhases\Gui\Overlays\GameMapOverlay.cs" />
     <Compile Include="GamePhases\Gui\Resources.cs" />
     <Compile Include="GameObjects\AnimationInfo.cs" />
@@ -114,6 +116,7 @@
     <Compile Include="GraphicsPoo\GraphicsExtensions.cs" />
     <Compile Include="GraphicsPoo\GraphicsHelper.cs" />
     <Compile Include="GraphicsPoo\GraphicsTracker.cs" />
+    <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteDirectionEnum.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteEnum.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteDetails.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteSheets.cs" />

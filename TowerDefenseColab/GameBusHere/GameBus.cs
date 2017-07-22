@@ -51,6 +51,7 @@ namespace TowerDefenseColab.GameBusHere
         /// </summary>
         public void Publish<TMessage>(TMessage message) where TMessage : class, IGameMessage
         {
+            _logger.LogDebug($"Got message: {message.GetType().Name}, sending...");
             bool anyoneReceived = false;
             foreach (ISubscriber subscriber in _subscribers)
             {
@@ -59,7 +60,7 @@ namespace TowerDefenseColab.GameBusHere
                     anyoneReceived = true;
                 }
             }
-            _logger.LogDebug($"{message.GetType().Name} received: {anyoneReceived}");
+            _logger.LogDebug($"Message {message.GetType().Name} was received by: {anyoneReceived}");
         }
     }
 }

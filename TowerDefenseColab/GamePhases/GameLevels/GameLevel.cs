@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using TowerDefenseColab.GameBusHere;
 using TowerDefenseColab.GameBusHere.Messages;
-using TowerDefenseColab.GameMechanisms;
 using TowerDefenseColab.GameObjects.Enemies;
 using TowerDefenseColab.GameObjects.Towers;
+using TowerDefenseColab.GamePhases.Gui;
 using TowerDefenseColab.GamePhases.Gui.Overlays;
 using TowerDefenseColab.GraphicsPoo;
-using TowerDefenseColab.GraphicsPoo.SpriteUnicorn;
+using TowerDefenseColab.Logging;
 
 namespace TowerDefenseColab.GamePhases.GameLevels
 {
+    [DebuggerDisplay("State: {" + nameof(_gameState) + "}, visible: {" + nameof(IsVisible) + "}")]
     // ReSharper disable once ClassNeverInstantiated.Global
     public class GameLevel : GamePhase
     {
@@ -24,34 +27,35 @@ namespace TowerDefenseColab.GamePhases.GameLevels
         private Queue<EnemyTypeEnum> _monstersLeftToSpawn;
         private GameState _gameState = GameState.Paused;
         private readonly List<TowerBase> _towers = new List<TowerBase>();
+        private TowerBase _towerBeingPlaced;
         private Resources _resources;
         private readonly GraphicsTracker _graphicsTracker;
         private readonly FontsAndColors _fontsAndColors;
-        private readonly SpriteSheets _spriteSheets;
-        private readonly GameBus _bus;
         private readonly GameMapOverlay _gameMapOverlay;
         private readonly StringFormat _stringFormatCenter;
         private readonly EnemySpawner _enemySpawner;
+        private readonly ApplicationLogger _logger;
+        private readonly EnemyFactory _enemyFactory;
 
         public GameLevel(
             GameLevelSettings settings,
-            GamePhaseManager gamePhaseManager,
             InputManager inputManager,
             TowerFactory towerFactory,
             GraphicsTracker graphicsTracker,
             MouseDragControl mouseDragControl,
             FontsAndColors fontsAndColors,
-            SpriteSheets spriteSheets,
             GameBus bus,
-            GameMapOverlay gameMapOverlay)
+            GameMapOverlay gameMapOverlay,
+            ApplicationLogger logger,
+            EnemyFactory enemyFactory)
         {
             _settings = settings;
             _towerFactory = towerFactory;
             _graphicsTracker = graphicsTracker;
             _fontsAndColors = fontsAndColors;
-            _spriteSheets = spriteSheets;
-            _bus = bus;
             _gameMapOverlay = gameMapOverlay;
+            _logger = logger;
+            _enemyFactory = enemyFactory;
             _stringFormatCenter = new StringFormat
             {
                 LineAlignment = StringAlignment.Center,
@@ -67,13 +71,13 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             {
                 if (IsVisible)
                 {
-                    bus.Publish(new GameStateChange(GameState.Lost));
+                    _gameState = GameState.Lost;
                 }
             });
 
             bus.Subscribe<GameStateChange>(message =>
             {
-                if (IsVisible)
+                if (IsVisible && message.GameLevel == this)
                 {
                     _gameState = message.GameState;
                 }
@@ -86,7 +90,7 @@ namespace TowerDefenseColab.GamePhases.GameLevels
                     CurrentEnemiesNew.Remove(message.Enemy);
                     if (CurrentEnemiesNew.Count == 0 && _monstersLeftToSpawn.Count == 0)
                     {
-                        _bus.Publish(new GameStateChange(GameState.Won));
+                        _gameState = GameState.Won;
                     }
                 }
             });
@@ -95,10 +99,11 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             {
                 if (IsVisible && message.EventArgs.Button == MouseButtons.Left)
                 {
-                    TowerBase towerBeingPlaced = _towers.SingleOrDefault(t => t.TowerStateEnum == TowerStateEnum.Setup);
-                    // There is a tower being placed and mouse was clicked => place it.
-                    // TODO: Make some map checks...
-                    towerBeingPlaced?.Place();
+                    if (_towerBeingPlaced != null)
+                    {
+                        // There is a tower being placed and mouse was clicked => place it.
+                        PlaceTower(_towerBeingPlaced);
+                    }
                 }
             });
 
@@ -108,13 +113,13 @@ namespace TowerDefenseColab.GamePhases.GameLevels
                 {
                     if (_gameState == GameState.Won)
                     {
-                        _bus.Publish(new GameStateChange(GameState.Won));
+                        bus.Publish(new GameStateChange(GameState.Won, this));
                         CurrentEnemiesNew.Clear();
                         return;
                     }
                     if (_gameState == GameState.Lost)
                     {
-                        _bus.Publish(new GameStateChange(GameState.Lost));
+                        bus.Publish(new GameStateChange(GameState.Lost, this));
                         CurrentEnemiesNew.Clear();
                         return;
                     }
@@ -134,7 +139,7 @@ namespace TowerDefenseColab.GamePhases.GameLevels
 
         private void StartPlacingTower()
         {
-            _towers.RemoveAll(t => t.TowerStateEnum == TowerStateEnum.Setup);
+            _towerBeingPlaced = null;
             TowerBase newTower = _towerFactory.GetTower(_time, this,
                 new TowerSettings
                 {
@@ -146,9 +151,24 @@ namespace TowerDefenseColab.GamePhases.GameLevels
                 _graphicsTracker);
             newTower.Init();
 
-            if (_resources.TryTake(newTower.Settings.CostBase))
+            if (_resources.DoesAfford(newTower.Settings.CostBase))
             {
-                _towers.Add(newTower);
+                // Add the tower (has "Setup" state).
+                _towerBeingPlaced = newTower;
+            }
+        }
+
+        private void PlaceTower(TowerBase towerBeingPlaced)
+        {
+            // TODO: Make some map checks...
+            if (_resources.TryTake(towerBeingPlaced.Settings.CostBase))
+            {
+                towerBeingPlaced.Place();
+                _towers.Add(towerBeingPlaced);
+            }
+            else
+            {
+                _towerBeingPlaced = null;
             }
         }
 
@@ -169,6 +189,8 @@ namespace TowerDefenseColab.GamePhases.GameLevels
 
         public override void Init()
         {
+            _logger.LogInfo("Game level init: " + _settings.PhaseEnum);
+
             _time.Reset();
             _towers.Clear();
             _gameState = GameState.Paused;
@@ -194,6 +216,7 @@ namespace TowerDefenseColab.GamePhases.GameLevels
             {
                 tower.Render(g);
             }
+            _towerBeingPlaced?.Render(g);
 
             // Some extra info depending on the game state.
             switch (_gameState)
@@ -226,8 +249,7 @@ namespace TowerDefenseColab.GamePhases.GameLevels
         public override void Update(TimeSpan timeDelta)
         {
             // Update the location of the tower being currently placed.
-            TowerBase towerBeingPlaced = _towers.SingleOrDefault(t => t.TowerStateEnum == TowerStateEnum.Setup);
-            towerBeingPlaced?.Update(timeDelta);
+            _towerBeingPlaced?.Update(timeDelta);
 
             if (_gameState == GameState.Paused || _gameState == GameState.Lost || _gameState == GameState.Won)
             {
@@ -262,21 +284,10 @@ namespace TowerDefenseColab.GamePhases.GameLevels
         {
             if (_enemySpawner.SpawnEnemy() && _monstersLeftToSpawn.Count > 0)
             {
-                // TODO: actually spawn that type.
-                var typeToSpawn = _monstersLeftToSpawn.Dequeue();
-
-                var spr = new SpriteWithDirections
-                {
-                    Sprites = new Dictionary<SpriteDirectionEnum, SpriteDetails>
-                    {
-                        {SpriteDirectionEnum.BottomLeft, _spriteSheets.GetSprite(SpriteEnum.VehicleVanBottomLeft)},
-                        {SpriteDirectionEnum.BottomRight, _spriteSheets.GetSprite(SpriteEnum.VehicleVanBottomRight)},
-                        {SpriteDirectionEnum.TopLeft, _spriteSheets.GetSprite(SpriteEnum.VehicleVanTopLeft)},
-                        {SpriteDirectionEnum.TopRight, _spriteSheets.GetSprite(SpriteEnum.VehicleVanTopRight)}
-                    }
-                };
-
-                CurrentEnemiesNew.Add(new Enemy(spr, _graphicsTracker, _settings.Waypoints, _bus, _fontsAndColors));
+                // TODO: Create stuff based on type
+                EnemyTypeEnum typeToSpawn = _monstersLeftToSpawn.Dequeue();
+                Enemy newEnemy = _enemyFactory.CreateDefault(typeToSpawn, _settings.Waypoints);
+                CurrentEnemiesNew.Add(newEnemy);
             }
         }
 
