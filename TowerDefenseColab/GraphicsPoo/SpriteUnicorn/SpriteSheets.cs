@@ -8,119 +8,64 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
     {
         private readonly Dictionary<SpriteEnum, SpriteDetails> _spriteDetails;
 
-        public SpriteSheets(AssetsFactory assetsFactory)
+        public SpriteSheets(AssetsFactory assetsFactory, AssetsFactory assetsFactory1)
         {
-            Bitmap sheetLandscape = assetsFactory.GetLandscapeSpritesheet();
-            Bitmap sheetCars = assetsFactory.GetCarsSpritesheet();
-            Bitmap sheetTowers = assetsFactory.GetTowersSpritesheet();
+            Bitmap sheetTowers = assetsFactory.GetSpriteSheet("towers_grey_sheet").Image;
+            SpriteSheet landscape = assetsFactory1.GetSpriteSheet("landscape_sheet");
+            SpriteSheet cars = assetsFactory1.GetSpriteSheet("cars_sheet");
 
             _spriteDetails = new Dictionary<SpriteEnum, SpriteDetails>
             {
                 // LANDSCAPE
                 {
                     SpriteEnum.LandscapeGrass,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetLandscape,
-                        Location = new Rectangle(1193, 0, 132, 99),
-                        Anchor = new Point(1258, 66)
-                    }
+                    landscape.GetByName("landscape_28.png")
                 },
                 {
                     SpriteEnum.LandscapeRoadDown,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetLandscape,
-                        Location = new Rectangle(928, 230, 132, 99),
-                        Anchor = new Point(994, 296)
-                    }
+                    landscape.GetByName("landscape_32.png")
                 },
                 {
                     SpriteEnum.LandscapeMinerals,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetLandscape,
-                        Location = new Rectangle(0, 0, 134, 100),
-                        Anchor = new Point(66, 66)
-                    }
+                    landscape.GetByName("rocks_1.png")
                 },
                 {
                     SpriteEnum.LandscapeRoadUp,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetLandscape,
-                        Location = new Rectangle(1325, 0, 132, 99),
-                        Anchor = new Point(1391, 66)
-                    }
+                    landscape.GetByName("landscape_29.png")
                 },
                 {
                     SpriteEnum.LandscapeTurnTopLeftTopRight,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetLandscape,
-                        Location = new Rectangle(928, 329, 132, 99),
-                        Anchor = new Point(994, 395)
-                    }
+                    landscape.GetByName("landscape_07.png")
+
                 },
                 {
                     SpriteEnum.LandscapeTurnBottomLeftBottomRight,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetLandscape,
-                        Location = new Rectangle(1720, 100, 133, 98),
-                        Anchor = new Point(1786, 165)
-                    }
+                    landscape.GetByName("landscape_38.png")
                 },
                 {
                     SpriteEnum.LandscapeTurnBottomLeftTopLeft,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetLandscape,
-                        Location = new Rectangle(1060, 297, 132, 99),
-                        Anchor = new Point(1126, 363)
-                    }
+                    landscape.GetByName("landscape_03.png")
                 },
                 {
                     SpriteEnum.LandscapeTurnBottomRightTopRight,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetLandscape,
-                        Location = new Rectangle(1059,396,133,99),
-                        Anchor = new Point(1126,462)
-                    }
-                },  
+                    landscape.GetByName("landscape_02.png")
+                },
                 // CARS
                 {
                     SpriteEnum.VehicleVanBottomRight,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetCars,
-                        Location = new Rectangle(271, 64, 33, 31)
-                    }
+                    cars.GetByName("carBlue6_011.png")
                 },
                 {
                     SpriteEnum.VehicleVanBottomLeft,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetCars,
-                        Location = new Rectangle(137, 431, 33, 31)
-                    }
+                    cars.GetByName("carBlue6_010.png")
                 },
                 {
                     SpriteEnum.VehicleVanTopRight,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetCars,
-                        Location = new Rectangle(526, 345, 33, 31)
-                    }
+                    cars.GetByName("carBlue6_006.png")
                 },
                 {
                     SpriteEnum.VehicleVanTopLeft,
-                    new SpriteDetails
-                    {
-                        Spritesheet = sheetCars,
-                        Location = new Rectangle(137, 258, 33, 31)
-                    }
+                    cars.GetByName("carBlue6_004.png")
                 },
                 // TOWER
                 {

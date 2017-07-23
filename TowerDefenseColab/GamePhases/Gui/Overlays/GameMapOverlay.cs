@@ -47,8 +47,11 @@ namespace TowerDefenseColab.GamePhases.Gui.Overlays
                         Point pointOnScreen = GraphicsHelper.ConvertMapToReal(x, y, _graphicsTracker.MapOffset);
 
                         // Calculate the anchor location of the sprite.
-                        int xx = sprite.Anchor.X - sprite.Location.X;
-                        int yy = sprite.Anchor.Y - sprite.Location.Y;
+
+                        var anchor = new Point(sprite.Location.X + sprite.Location.Width / 2, sprite.Location.Y + sprite.Location.Height - 32);
+
+                        int xx = anchor.X - sprite.Location.X;
+                        int yy = anchor.Y - sprite.Location.Y;
 
                         Point realPoint = new Point(pointOnScreen.X - xx, pointOnScreen.Y - yy);
 

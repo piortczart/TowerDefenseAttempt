@@ -120,6 +120,7 @@
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteEnum.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteDetails.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteSheets.cs" />
+    <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteSheetXml.cs" />
     <Compile Include="GraphicsPoo\SpriteUnicorn\SpriteWithDirections.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="LogsOverlay.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GameWindow.resx">
       <DependentUpon>GameWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -175,7 +177,16 @@
     <Content Include="Assets\Spritesheets\cars_sheet.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\Spritesheets\landscape_sheet.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Spritesheets\cars_sheet.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\Spritesheets\towers_grey_sheet.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Spritesheets\towers_grey_sheet.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\squareOfPew.png">
