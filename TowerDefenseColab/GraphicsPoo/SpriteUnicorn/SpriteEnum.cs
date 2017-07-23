@@ -1,5 +1,8 @@
 namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
 {
+    /// <summary>
+    /// Enum with all sprites.
+    /// </summary>
     public enum SpriteEnum
     {
         LandscapeGrass,
@@ -15,5 +18,6 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
         VehicleVanBottomLeft,
         VehicleVanTopLeft,
         Tower,
+        Building
     }
 }

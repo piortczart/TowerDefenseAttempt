@@ -4,15 +4,19 @@ using TowerDefenseColab.Assets;
 
 namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
 {
+    /// <summary>
+    /// Gives access to all sprite sheets.
+    /// </summary>
     public class SpriteSheets
     {
         private readonly Dictionary<SpriteEnum, SpriteDetails> _spriteDetails;
 
-        public SpriteSheets(AssetsFactory assetsFactory, AssetsFactory assetsFactory1)
+        public SpriteSheets(AssetsFactory assetsFactory)
         {
             Bitmap sheetTowers = assetsFactory.GetSpriteSheet("towers_grey_sheet").Image;
-            SpriteSheet landscape = assetsFactory1.GetSpriteSheet("landscape_sheet");
-            SpriteSheet cars = assetsFactory1.GetSpriteSheet("cars_sheet");
+            SpriteSheet landscape = assetsFactory.GetSpriteSheet("landscape_sheet");
+            SpriteSheet cars = assetsFactory.GetSpriteSheet("cars_sheet");
+            SpriteSheet buldings = assetsFactory.GetSpriteSheet("buildings_sheet");
 
             _spriteDetails = new Dictionary<SpriteEnum, SpriteDetails>
             {
@@ -75,6 +79,11 @@ namespace TowerDefenseColab.GraphicsPoo.SpriteUnicorn
                         Spritesheet = sheetTowers,
                         Location = new Rectangle(0, 308, 93, 99)
                     }
+                },
+                // BUILDING
+                {
+                    SpriteEnum.Building,
+                    buldings.GetByName("buildingTiles_123.png")
                 }
             };
         }

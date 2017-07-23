@@ -5,7 +5,7 @@ using TowerDefenseColab.GraphicsPoo.SpriteUnicorn;
 
 namespace TowerDefenseColab.GameObjects
 {
-    public class EntitysSpriteDirected
+    public class SpriteWithDirectionsRenderer
     {
         public SpriteDetails Sprite => _sprite.Sprites[_direction];
         private readonly SpriteWithDirections _sprite;
@@ -18,7 +18,7 @@ namespace TowerDefenseColab.GameObjects
 
         public Size Size => Sprite.Location.Size;
 
-        public EntitysSpriteDirected(SpriteWithDirections sprite)
+        public SpriteWithDirectionsRenderer(SpriteWithDirections sprite)
         {
             _sprite = sprite;
         }

@@ -16,7 +16,7 @@ namespace TowerDefenseColab.GameObjects.Towers
         public readonly TowerSettings Settings;
         private readonly GameLevel _gameLevel;
         private PointF LocationCenter { get; set; }
-        private readonly EntitysSpriteDirected _sprite;
+        private readonly SpriteWithDirectionsRenderer _sprite;
         private readonly GraphicsTracker _graphicsTracker;
         private readonly InputManager _inputManager;
 
@@ -41,7 +41,7 @@ namespace TowerDefenseColab.GameObjects.Towers
                     }
             };
 
-            _sprite = new EntitysSpriteDirected(spr);
+            _sprite = new SpriteWithDirectionsRenderer(spr);
         }
 
         public override void Init()
@@ -58,7 +58,7 @@ namespace TowerDefenseColab.GameObjects.Towers
                     SetLocationCenter(Point.Add(_inputManager.GetMousePosition(), _sprite.Size.Invert()));
                     break;
                 case TowerStateEnum.Active:
-                    _sprite.IsRelativeToMap = true;
+                    //_sprite.IsRelativeToMap = true;
                     if (_shootLimiter.CanDoStuff())
                     {
                         Shoot();
@@ -76,9 +76,9 @@ namespace TowerDefenseColab.GameObjects.Towers
             Enemy enemy = GetClosestEnemy();
             if (enemy != null && IsInRange(enemy))
             {
-                var realCenter = _sprite.GetWindowLocation(_graphicsTracker, LocationCenter);
+                PointF realCenter = _sprite.GetWindowLocation(_graphicsTracker, LocationCenter);
 
-                g.Graphics.DrawLine(Pens.Crimson, realCenter, enemy.SpriteDirected.GetWindowLocation(_graphicsTracker, enemy.LocationCenter));
+                g.Graphics.DrawLine(Pens.Crimson, realCenter, enemy.SpriteWithDirectionsRenderer.GetWindowLocation(_graphicsTracker, enemy.LocationCenter));
             }
         }
 

@@ -23,7 +23,7 @@ namespace TowerDefenseColab.GameObjects.Enemies
         private readonly FontsAndColors _fontsAndColors;
         private readonly EntitysHealth _health;
         private readonly SpriteSheets _spriteSheets;
-        public EntitysSpriteDirected SpriteDirected { get; }
+        public SpriteWithDirectionsRenderer SpriteWithDirectionsRenderer { get; }
 
         public bool IsAlive => !_health.IsDead;
         public bool IsVisible { get; private set; } = true;
@@ -43,14 +43,14 @@ namespace TowerDefenseColab.GameObjects.Enemies
             _health = new EntitysHealth { Health = settings.Health };
             _waypoints = settings.Waypoints;
 
-            SpriteDirected = CreateSprite(settings.EnemyType);
+            SpriteWithDirectionsRenderer = CreateSprite(settings.EnemyType);
         }
 
         public override void Init()
         {
         }
 
-        private EntitysSpriteDirected CreateSprite(EnemyTypeEnum settingsEnemyType)
+        private SpriteWithDirectionsRenderer CreateSprite(EnemyTypeEnum settingsEnemyType)
         {
             var spriteWithDirections = new SpriteWithDirections
             {
@@ -62,12 +62,12 @@ namespace TowerDefenseColab.GameObjects.Enemies
                         {SpriteDirectionEnum.TopRight, _spriteSheets.GetSprite(SpriteEnum.VehicleVanTopRight)}
                     }
             };
-            return new EntitysSpriteDirected(spriteWithDirections);
+            return new SpriteWithDirectionsRenderer(spriteWithDirections);
         }
 
         private Point ActualLocationByMap(int mapX, int mapY)
         {
-            Point mapLocation = GraphicsHelper.ConvertMapToReal(mapX, mapY, Point.Empty);
+            Point mapLocation = GraphicsHelper.ConvertMapCoordsToWindowCoords(mapX, mapY, Point.Empty);
             return new Point(mapLocation.X, mapLocation.Y - 34);
         }
 
@@ -112,7 +112,7 @@ namespace TowerDefenseColab.GameObjects.Enemies
                 // From current position to the current waypoint.
                 Vector2 toWaypoint = new Vector2(currentWaypoint.X - _currentX, currentWaypoint.Y - _currentY);
 
-                SpriteDirected.ChangeDirection(toWaypoint);
+                SpriteWithDirectionsRenderer.ChangeDirection(toWaypoint);
 
                 // Distance traveled.
                 float traveled = (float)timeDelta.TotalSeconds * speed;
@@ -130,8 +130,8 @@ namespace TowerDefenseColab.GameObjects.Enemies
                 }
             }
 
-            LocationCenter = new PointF(_currentX - SpriteDirected.Sprite.Location.Width / 2,
-                _currentY - SpriteDirected.Sprite.Location.Height / 2);
+            LocationCenter = new PointF(_currentX - SpriteWithDirectionsRenderer.Sprite.Location.Width / 2,
+                _currentY - SpriteWithDirectionsRenderer.Sprite.Location.Height / 2);
         }
 
         public override void Render(BufferedGraphics g)
@@ -139,7 +139,7 @@ namespace TowerDefenseColab.GameObjects.Enemies
             if (IsVisible)
             {
                 // Render the sprite. Returns the render coordiates.
-                PointF renderCoords = SpriteDirected.Render(g, _graphicsTracker, LocationCenter);
+                PointF renderCoords = SpriteWithDirectionsRenderer.Render(g, _graphicsTracker, LocationCenter);
 
                 if (IsAlive)
                 {

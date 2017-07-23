@@ -44,7 +44,7 @@ namespace TowerDefenseColab.GamePhases.Gui.Overlays
                     if (sprite != null)
                     {
                         // This is the point where the sprite should be painted.
-                        Point pointOnScreen = GraphicsHelper.ConvertMapToReal(x, y, _graphicsTracker.MapOffset);
+                        Point pointOnScreen = GraphicsHelper.ConvertMapCoordsToWindowCoords(x, y, _graphicsTracker.MapOffset);
 
                         // Calculate the anchor location of the sprite.
 
